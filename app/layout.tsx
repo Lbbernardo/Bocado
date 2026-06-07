@@ -1,10 +1,13 @@
 import type { Metadata, Viewport } from 'next'
 import { Poppins, Baloo_2 } from 'next/font/google'
 import './globals.css'
-import ChatWidget from '@/components/ChatWidget'
-import CartToast from '@/components/CartToast'
-import CartBar from '@/components/CartBar'
-import CartHydration from '@/components/CartHydration'
+import dynamic from 'next/dynamic'
+
+// Load cart UI components client-only to avoid hydration mismatch with localStorage
+const CartToast = dynamic(() => import('@/components/CartToast'), { ssr: false })
+const CartBar = dynamic(() => import('@/components/CartBar'), { ssr: false })
+const CartHydration = dynamic(() => import('@/components/CartHydration'), { ssr: false })
+const ChatWidget = dynamic(() => import('@/components/ChatWidget'), { ssr: false })
 
 const poppins = Poppins({
   weight: ['400', '500', '600', '700', '800', '900'],
