@@ -73,11 +73,9 @@ export default function CarritoPage() {
   const total = subtotal + deliveryFee
 
   useEffect(() => {
-    // Wait for Zustand to rehydrate from localStorage before checking cart
-    const unsub = useCart.persist.onFinishHydration(() => setHydrated(true))
-    if (useCart.persist.hasHydrated()) setHydrated(true)
+    // Mark hydrated after client mount — Zustand rehydrates from localStorage after mount
+    setHydrated(true)
     fetch('/api/config').then(r => r.json()).then(setConfig).catch(() => {})
-    return () => unsub()
   }, [])
 
   // ── Loading (waiting for cart hydration) ──
