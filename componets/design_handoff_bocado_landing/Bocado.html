@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Bocado · Tequeños Venezolanos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Baloo+2:wght@600;700;800&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --orange:#FF9E00;
+  --orange-2:#FFA600;
+  --orange-deep:#F07A12;
+  --yellow:#FFC107;
+  --cream:#FBF5E9;
+  --cream-2:#FDF9F0;
+  --ink:#2E2A24;
+  --ink-soft:#6b6358;
+  --white:#ffffff;
+  --radius:26px;
+  --shadow-soft:0 24px 60px -28px rgba(196,118,16,.55);
+  --shadow-card:0 18px 40px -24px rgba(70,50,20,.35);
+  --maxw:1180px;
+  --display:"Baloo 2", "Poppins", sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  font-family:"Poppins",system-ui,sans-serif;
+  color:var(--ink);
+  background:var(--white);
+  -webkit-font-smoothing:antialiased;
+  line-height:1.5;
+}
+h1,h2,h3,h4{font-family:var(--display);margin:0;line-height:1.04;letter-spacing:-.01em}
+p{margin:0}
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
+.wrap{width:100%;max-width:var(--maxw);margin:0 auto;padding:0 26px}
+.tequeno-bg{
+  background-image:url("assets/pattern.svg");
+  background-size:230px;
+}
+
+/* ---------- buttons ---------- */
+.btn{
+  display:inline-flex;align-items:center;gap:.55em;
+  font-family:var(--display);font-weight:700;font-size:1.02rem;
+  padding:.92em 1.5em;border-radius:999px;cursor:pointer;border:none;
+  transition:transform .18s ease, box-shadow .18s ease, background .18s ease;
+  white-space:nowrap;
+}
+.btn svg{width:1.15em;height:1.15em}
+.btn-primary{background:var(--orange);color:#fff;box-shadow:0 14px 26px -12px rgba(240,122,18,.85)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 20px 34px -12px rgba(240,122,18,.95);background:var(--orange-deep)}
+.btn-ghost{background:#fff;color:var(--orange-deep);box-shadow:inset 0 0 0 2.5px rgba(255,158,0,.35)}
+.btn-ghost:hover{transform:translateY(-2px);box-shadow:inset 0 0 0 2.5px var(--orange)}
+.btn-white{background:#fff;color:var(--orange-deep)}
+.btn-white:hover{transform:translateY(-2px);box-shadow:0 16px 30px -14px rgba(0,0,0,.35)}
+
+/* ---------- header ---------- */
+header{
+  position:sticky;top:0;z-index:60;
+  background:rgba(253,249,240,.82);backdrop-filter:blur(10px);
+  transition:box-shadow .25s ease, background .25s ease;
+}
+header.scrolled{box-shadow:0 8px 26px -18px rgba(80,55,20,.5);background:rgba(253,249,240,.94)}
+.nav{display:flex;align-items:center;justify-content:space-between;gap:20px;height:78px}
+.brand{display:flex;align-items:center;gap:10px}
+.brand img{height:42px;width:auto}
+.nav-links{display:flex;align-items:center;gap:30px}
+.nav-links a{font-weight:600;font-size:.98rem;color:var(--ink);position:relative;padding:4px 0}
+.nav-links a::after{content:"";position:absolute;left:0;right:100%;bottom:-2px;height:2.5px;border-radius:2px;background:var(--orange);transition:right .25s ease}
+.nav-links a:hover::after{right:0}
+.nav-cta{display:flex;align-items:center;gap:14px}
+.menu-btn{display:none;background:none;border:none;cursor:pointer;padding:6px;color:var(--ink)}
+.menu-btn svg{width:30px;height:30px}
+
+/* ---------- hero ---------- */
+.hero{position:relative;overflow:hidden;background:var(--cream)}
+.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:30px;align-items:center;padding:46px 0 64px}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:.5em;
+  background:#fff;color:var(--orange-deep);font-weight:700;font-size:.86rem;
+  letter-spacing:.04em;text-transform:uppercase;
+  padding:.5em 1em;border-radius:999px;box-shadow:var(--shadow-card);
+}
+.eyebrow svg{width:1.2em;height:1.2em;color:var(--orange)}
+.hero h1{font-size:clamp(2.6rem,5.6vw,4.6rem);margin:22px 0 0;color:var(--ink)}
+.hero h1 .pop{color:var(--orange);position:relative;white-space:nowrap}
+.hero-tag{
+  display:inline-block;margin-top:20px;font-family:var(--display);font-weight:700;
+  font-size:clamp(1.05rem,2vw,1.4rem);color:var(--orange-deep);
+}
+.hero-sub{margin-top:14px;font-size:1.12rem;color:var(--ink-soft);max-width:30em}
+.hero-actions{display:flex;flex-wrap:wrap;gap:14px;margin-top:30px}
+.hero-meta{display:flex;gap:26px;margin-top:30px;flex-wrap:wrap}
+.hero-meta .m{display:flex;align-items:center;gap:10px}
+.hero-meta .m b{font-family:var(--display);font-size:1.3rem;color:var(--ink);line-height:1}
+.hero-meta .m span{font-size:.82rem;color:var(--ink-soft);font-weight:500}
+.hero-meta .m svg{width:30px;height:30px;color:var(--orange);flex:none}
+
+.hero-visual{position:relative;display:flex;justify-content:center;align-items:center;min-height:420px}
+.hero-blob{
+  position:absolute;width:108%;aspect-ratio:1/1;border-radius:46% 54% 58% 42% / 50% 44% 56% 50%;
+  background:radial-gradient(circle at 35% 30%, #FFB733, var(--orange) 60%, var(--orange-deep));
+  box-shadow:var(--shadow-soft);
+  animation:blob 14s ease-in-out infinite;
+}
+@keyframes blob{50%{border-radius:54% 46% 42% 58% / 44% 56% 44% 56%}}
+.hero-plate{
+  position:relative;z-index:2;width:96%;border-radius:30px;overflow:hidden;
+  box-shadow:0 40px 80px -30px rgba(120,70,10,.7);
+  transform:rotate(-2deg);
+}
+.hero-plate img{width:100%;height:100%;object-fit:cover}
+.seal{
+  position:absolute;z-index:4;right:2%;bottom:-3%;width:128px;height:128px;
+  background:var(--orange);color:#fff;border-radius:50%;
+  display:grid;place-items:center;text-align:center;
+  box-shadow:0 18px 30px -14px rgba(240,122,18,.9);
+  font-family:var(--display);font-weight:800;line-height:1.05;font-size:.78rem;
+  border:4px solid #fff;animation:spin 26s linear infinite;
+  padding:14px;
+}
+.seal .big{font-size:1.5rem;display:block;margin:2px 0}
+@keyframes spin{to{transform:rotate(360deg)}}
+.float-chip{
+  position:absolute;z-index:5;background:#fff;border-radius:16px;padding:10px 14px;
+  display:flex;align-items:center;gap:9px;box-shadow:var(--shadow-card);font-weight:600;font-size:.86rem;
+}
+.float-chip svg{width:24px;height:24px;color:var(--orange)}
+.float-chip.fc1{top:6%;left:-4%}
+.float-chip.fc2{top:40%;right:-7%}
+.wave{display:block;width:100%;height:auto;color:var(--cream)}
+
+/* ---------- benefits strip ---------- */
+.benefits{background:#fff;padding:14px 0 6px}
+.benefit-row{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;margin-top:-46px;position:relative;z-index:5}
+.benefit{
+  background:#fff;border-radius:22px;padding:24px 22px;box-shadow:var(--shadow-card);
+  display:flex;flex-direction:column;gap:10px;
+  transition:transform .2s ease, box-shadow .2s ease;
+}
+.benefit:hover{transform:translateY(-6px);box-shadow:0 26px 46px -26px rgba(70,50,20,.5)}
+.benefit .ic{
+  width:54px;height:54px;border-radius:16px;display:grid;place-items:center;
+  background:var(--cream);color:var(--orange);
+}
+.benefit .ic svg{width:30px;height:30px}
+.benefit b{font-family:var(--display);font-size:1.04rem;color:var(--ink);line-height:1.15}
+.benefit p{font-size:.9rem;color:var(--ink-soft)}
+
+/* ---------- section heading ---------- */
+.sec{padding:96px 0}
+.sec-head{text-align:center;max-width:42rem;margin:0 auto 56px}
+.kicker{
+  display:inline-flex;align-items:center;gap:.5em;color:var(--orange-deep);
+  font-weight:700;text-transform:uppercase;letter-spacing:.08em;font-size:.82rem;
+}
+.kicker .dot{width:7px;height:7px;border-radius:50%;background:var(--yellow)}
+.sec-head h2{font-size:clamp(2rem,4vw,3rem);margin-top:14px;color:var(--ink)}
+.sec-head p{margin-top:16px;font-size:1.1rem;color:var(--ink-soft)}
+
+/* ---------- product / cheese-pull ---------- */
+.product{background:var(--cream)}
+.product-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+.product-photo{position:relative;border-radius:30px;overflow:hidden;box-shadow:var(--shadow-soft);transform:rotate(-1.5deg)}
+.product-photo img{width:100%;display:block}
+.product-photo .tag{
+  position:absolute;left:18px;top:18px;background:#fff;color:var(--orange-deep);
+  font-family:var(--display);font-weight:700;font-size:.85rem;padding:.5em 1em;border-radius:999px;
+  box-shadow:var(--shadow-card);
+}
+.product h2{font-size:clamp(2rem,3.6vw,2.9rem)}
+.product .lead{margin-top:18px;font-size:1.12rem;color:var(--ink-soft)}
+.tick-list{list-style:none;padding:0;margin:26px 0 0;display:flex;flex-direction:column;gap:14px}
+.tick-list li{display:flex;gap:13px;align-items:flex-start;font-weight:500}
+.tick-list .tk{flex:none;width:28px;height:28px;border-radius:50%;background:var(--orange);color:#fff;display:grid;place-items:center;margin-top:1px}
+.tick-list .tk svg{width:18px;height:18px}
+.tick-list b{font-family:var(--display);font-weight:700}
+.tick-list span{display:block;color:var(--ink-soft);font-size:.95rem;font-weight:400}
+
+/* ---------- how to prepare ---------- */
+.steps{display:grid;grid-template-columns:1fr 1fr;gap:26px;max-width:880px;margin:0 auto}
+.step-card{
+  border-radius:26px;padding:34px 30px;position:relative;overflow:hidden;
+  border:2.5px solid #f3e7cf;background:#fff;
+  transition:transform .2s ease, border-color .2s ease;
+}
+.step-card:hover{transform:translateY(-5px);border-color:var(--orange)}
+.step-card .head{display:flex;align-items:center;gap:16px}
+.step-card .badge{
+  width:64px;height:64px;border-radius:18px;background:var(--orange);color:#fff;
+  display:grid;place-items:center;box-shadow:0 12px 22px -12px rgba(240,122,18,.9);
+}
+.step-card .badge svg{width:36px;height:36px}
+.step-card h3{font-size:1.5rem}
+.step-card .time{display:flex;align-items:center;gap:7px;color:var(--orange-deep);font-weight:700;margin-top:2px}
+.step-card .time svg{width:18px;height:18px}
+.step-card ol{margin:22px 0 0;padding:0;list-style:none;counter-reset:s;display:flex;flex-direction:column;gap:12px}
+.step-card ol li{display:flex;gap:12px;align-items:flex-start;counter-increment:s;font-size:.98rem;color:var(--ink-soft)}
+.step-card ol li::before{
+  content:counter(s);flex:none;width:26px;height:26px;border-radius:50%;
+  background:var(--cream);color:var(--orange-deep);font-family:var(--display);font-weight:700;
+  font-size:.85rem;display:grid;place-items:center;
+}
+.prep-note{text-align:center;margin-top:34px;color:var(--ink-soft);font-weight:500}
+.prep-note b{color:var(--ink)}
+
+/* ---------- gallery ---------- */
+.gallery{background:#fff}
+.gal-grid{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:200px;gap:18px}
+.gal-grid figure{margin:0;border-radius:22px;overflow:hidden;position:relative;box-shadow:var(--shadow-card)}
+.gal-grid img{width:100%;height:100%;object-fit:cover;transition:transform .5s ease}
+.gal-grid figure:hover img{transform:scale(1.07)}
+.gal-grid .span2{grid-column:span 2}
+.gal-grid .row2{grid-row:span 2}
+.gal-card{
+  background:var(--orange);color:#fff;display:flex;flex-direction:column;justify-content:center;
+  padding:26px;gap:8px;
+}
+.gal-card .num{font-family:var(--display);font-weight:800;font-size:3.4rem;line-height:1}
+.gal-card span{font-weight:500;opacity:.95}
+
+/* ---------- order / pricing ---------- */
+.order{background:var(--cream)}
+.order-grid{display:grid;grid-template-columns:1fr 1fr;gap:50px;align-items:center}
+.price-card{
+  background:#fff;border-radius:30px;padding:34px;box-shadow:var(--shadow-soft);position:relative;overflow:hidden;
+}
+.price-card .ribbon{
+  position:absolute;top:20px;right:-44px;transform:rotate(38deg);background:var(--yellow);color:var(--ink);
+  font-family:var(--display);font-weight:800;font-size:.78rem;padding:6px 56px;
+}
+.pc-top{display:flex;gap:20px;align-items:center}
+.pc-top .pic{width:130px;height:130px;flex:none;border-radius:20px;overflow:hidden;background:var(--cream);box-shadow:var(--shadow-card)}
+.pc-top .pic img{width:100%;height:100%;object-fit:cover}
+.pc-top h3{font-size:1.55rem}
+.pc-top .specs{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.spec{background:var(--cream);color:var(--ink);font-weight:600;font-size:.8rem;padding:.35em .8em;border-radius:999px;display:flex;align-items:center;gap:6px}
+.spec svg{width:15px;height:15px;color:var(--orange)}
+.rating{display:flex;align-items:center;gap:8px;margin-top:14px;color:var(--ink-soft);font-size:.9rem;font-weight:500}
+.stars{display:inline-flex;color:var(--yellow)}
+.stars svg{width:18px;height:18px}
+.price-row{display:flex;align-items:baseline;gap:12px;margin-top:24px;padding-top:24px;border-top:2px dashed #efe3cc}
+.price-row .now{font-family:var(--display);font-weight:800;font-size:2.8rem;color:var(--ink);line-height:1}
+.price-row .was{color:var(--ink-soft);text-decoration:line-through;font-weight:600}
+.price-row .each{margin-left:auto;color:var(--ink-soft);font-size:.86rem;font-weight:500;text-align:right}
+.qty-row{display:flex;align-items:center;gap:16px;margin-top:22px}
+.stepper{display:flex;align-items:center;gap:0;background:var(--cream);border-radius:999px;padding:5px}
+.stepper button{
+  width:40px;height:40px;border-radius:50%;border:none;background:#fff;color:var(--orange-deep);
+  font-size:1.4rem;font-family:var(--display);cursor:pointer;display:grid;place-items:center;
+  box-shadow:var(--shadow-card);transition:transform .12s ease;
+}
+.stepper button:active{transform:scale(.9)}
+.stepper .count{min-width:42px;text-align:center;font-family:var(--display);font-weight:700;font-size:1.2rem}
+.qty-row .btn{flex:1;justify-content:center}
+.pc-foot{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:16px;color:var(--ink-soft);font-size:.86rem;font-weight:500}
+.pc-foot svg{width:18px;height:18px;color:var(--orange)}
+.order-copy h2{font-size:clamp(2rem,3.6vw,2.9rem)}
+.order-copy .lead{margin-top:16px;font-size:1.1rem;color:var(--ink-soft)}
+.assure{display:flex;flex-direction:column;gap:16px;margin-top:28px}
+.assure .a{display:flex;gap:14px;align-items:center}
+.assure .a .ic{width:48px;height:48px;border-radius:14px;background:#fff;color:var(--orange);display:grid;place-items:center;box-shadow:var(--shadow-card);flex:none}
+.assure .a .ic svg{width:26px;height:26px}
+.assure .a b{font-family:var(--display);font-weight:700;display:block}
+.assure .a span{color:var(--ink-soft);font-size:.92rem}
+
+/* ---------- where to buy ---------- */
+.where{background:#fff;text-align:center}
+.retailers{display:flex;flex-wrap:wrap;justify-content:center;gap:16px;margin-top:8px}
+.retailer{
+  background:var(--cream);border-radius:16px;padding:18px 28px;font-family:var(--display);font-weight:700;
+  color:var(--ink);font-size:1.05rem;display:flex;align-items:center;gap:10px;min-width:170px;justify-content:center;
+  transition:transform .2s ease, color .2s ease;
+}
+.retailer:hover{transform:translateY(-4px);color:var(--orange-deep)}
+.retailer .d{width:10px;height:10px;border-radius:50%;background:var(--orange)}
+
+/* ---------- newsletter band ---------- */
+.cta-band{background:var(--orange);color:#fff;position:relative;overflow:hidden}
+.cta-band .tequeno-bg{position:absolute;inset:0;opacity:.16}
+.cta-inner{position:relative;text-align:center;padding:80px 0}
+.cta-inner img.logo-w{height:54px;margin:0 auto 22px}
+.cta-inner h2{font-size:clamp(2.1rem,4vw,3.2rem)}
+.cta-inner p{margin-top:14px;font-size:1.12rem;opacity:.96;max-width:34rem;margin-left:auto;margin-right:auto}
+.subscribe{display:flex;gap:12px;max-width:480px;margin:30px auto 0}
+.subscribe input{
+  flex:1;border:none;border-radius:999px;padding:1em 1.4em;font-family:"Poppins";font-size:1rem;
+  background:#fff;color:var(--ink);outline:none;box-shadow:0 10px 26px -14px rgba(0,0,0,.4);
+}
+.subscribe .btn{background:var(--ink);color:#fff}
+.subscribe .btn:hover{background:#1f1c17}
+.cta-mini{margin-top:14px;font-size:.86rem;opacity:.9}
+
+/* ---------- footer ---------- */
+footer{background:var(--ink);color:#e9e2d6}
+.foot-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:36px;padding:64px 0 30px}
+.foot-brand img{height:46px;margin-bottom:16px}
+.foot-brand p{color:#b6ac9c;font-size:.95rem;max-width:24em}
+.socials{display:flex;gap:12px;margin-top:18px}
+.socials a{width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.08);display:grid;place-items:center;color:#fff;transition:background .2s ease}
+.socials a:hover{background:var(--orange)}
+.socials svg{width:20px;height:20px}
+.foot-col h4{font-family:var(--display);font-size:1.05rem;color:#fff;margin-bottom:14px}
+.foot-col a{display:block;color:#b6ac9c;font-size:.95rem;padding:5px 0;transition:color .2s ease}
+.foot-col a:hover{color:var(--yellow)}
+.foot-bar{border-top:1px solid rgba(255,255,255,.1);padding:20px 0;display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;color:#8d8474;font-size:.85rem}
+
+/* ---------- toast ---------- */
+.toast{
+  position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(140%);
+  background:var(--ink);color:#fff;padding:14px 22px;border-radius:14px;display:flex;align-items:center;gap:12px;
+  box-shadow:0 20px 40px -18px rgba(0,0,0,.55);z-index:120;font-weight:600;transition:transform .35s cubic-bezier(.2,.9,.3,1.3);
+}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.toast .tk{width:26px;height:26px;border-radius:50%;background:var(--orange);display:grid;place-items:center;flex:none}
+.toast .tk svg{width:17px;height:17px;color:#fff}
+
+/* ---------- reveal ---------- */
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .7s ease, transform .7s ease}
+.reveal.in{opacity:1;transform:none}
+
+/* ---------- responsive ---------- */
+@media (max-width:980px){
+  .nav-links{display:none}
+  .menu-btn{display:block}
+  .hero-grid{grid-template-columns:1fr;gap:10px;padding:34px 0 50px}
+  .hero-visual{min-height:340px;margin-top:10px}
+  .benefit-row{grid-template-columns:1fr 1fr;margin-top:24px}
+  .product-grid,.order-grid{grid-template-columns:1fr;gap:34px}
+  .product-photo{order:-1}
+  .steps{grid-template-columns:1fr}
+  .gal-grid{grid-template-columns:1fr 1fr;grid-auto-rows:170px}
+  .foot-grid{grid-template-columns:1fr 1fr}
+  .mobile-menu.open{display:flex}
+}
+@media (max-width:560px){
+  .wrap{padding:0 18px}
+  .benefit-row{grid-template-columns:1fr}
+  .gal-grid{grid-template-columns:1fr 1fr;grid-auto-rows:150px}
+  .hero-meta{gap:18px}
+  .price-row{flex-wrap:wrap}
+  .price-row .each{margin-left:0;width:100%;text-align:left}
+  .subscribe{flex-direction:column}
+  .foot-grid{grid-template-columns:1fr 1fr;gap:24px}
+  .sec{padding:66px 0}
+}
+/* mobile menu */
+.mobile-menu{display:none;position:fixed;inset:0;z-index:90;background:var(--cream);flex-direction:column;padding:90px 30px 30px;gap:6px}
+.mobile-menu a{font-family:var(--display);font-weight:700;font-size:1.5rem;padding:14px 0;border-bottom:1px solid rgba(0,0,0,.06)}
+.mobile-menu .btn{margin-top:20px;justify-content:center}
+.mm-close{position:absolute;top:24px;right:24px;background:none;border:none;cursor:pointer;color:var(--ink)}
+.mm-close svg{width:32px;height:32px}
+</style>
+</head>
+<body>
+
+<!-- ===== icon sprite ===== -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="ico-snow" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M24 6v36M9 14.5l30 19M39 14.5l-30 19"/><path d="M24 6l-4 4M24 6l4 4M24 42l-4-4M24 42l4-4"/><path d="M9 14.5l.4 5.6M9 14.5l5.5-1M39 33.5l-.4-5.6M39 33.5l-5.5 1"/><path d="M39 14.5l-.4 5.6M39 14.5l-5.5-1M9 33.5l.4-5.6M9 33.5l5.5 1"/></g></symbol>
+    <symbol id="ico-airfryer" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9h24a2 2 0 0 1 2 2v3H10v-3a2 2 0 0 1 2-2z"/><path d="M11 14h26l-1.6 24a3 3 0 0 1-3 2.8H15.6a3 3 0 0 1-3-2.8L11 14z"/><rect x="20" y="33" width="8" height="5" rx="2.5"/></g></symbol>
+    <symbol id="ico-oven" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="32" height="32" rx="4"/><path d="M8 18h32"/><rect x="14" y="24" width="20" height="11" rx="2.5"/></g></symbol>
+    <symbol id="ico-cheese" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 26l28-12c4 2.5 6.5 6.5 7 12H7z"/><path d="M7 26v6h35v-6"/><circle cx="17" cy="24" r="2.2"/><circle cx="28" cy="27" r="1.8"/><circle cx="24" cy="20" r="1.4"/></g></symbol>
+    <symbol id="ico-leaf" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M38 9C20 9 11 18 11 31c0 3 1 6 1 6s11-1 18-8c5-5 8-12 8-20z"/><path d="M12 37C16 28 22 21 32 16"/></g></symbol>
+    <symbol id="ico-heart" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M24 39S8 29 8 18.5C8 13 12 9.5 16.5 9.5c3.2 0 6 1.8 7.5 4.6 1.5-2.8 4.3-4.6 7.5-4.6C40 9.5 40 13 40 18.5 40 29 24 39 24 39z"/></g></symbol>
+    <symbol id="ico-roll" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="16" width="36" height="16" rx="8"/><path d="M16 17l-2.5 14M24 16.5l-2.5 15M32 17l-2.5 14"/></g></symbol>
+    <symbol id="ico-check" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 25l8 8 16-18"/></g></symbol>
+    <symbol id="ico-truck" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h22v20H4z"/><path d="M26 19h8l6 6v7H26z"/><circle cx="13" cy="36" r="3.5"/><circle cx="33" cy="36" r="3.5"/></g></symbol>
+    <symbol id="ico-clock" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="24" r="17"/><path d="M24 14v10l7 4"/></g></symbol>
+    <symbol id="ico-star" viewBox="0 0 48 48"><path fill="currentColor" d="M24 5l5.6 11.3 12.5 1.8-9 8.8 2.1 12.4L24 35.3 12.8 41.3 14.9 28.9l-9-8.8 12.5-1.8z"/></symbol>
+    <symbol id="ico-arrow" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 24h26M26 14l10 10-10 10"/></g></symbol>
+    <symbol id="ico-menu" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"><path d="M8 15h32M8 24h32M8 33h32"/></g></symbol>
+    <symbol id="ico-x" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"><path d="M12 12l24 24M36 12L12 36"/></g></symbol>
+    <symbol id="ico-shield" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M24 6l16 6v10c0 11-7 17-16 20-9-3-16-9-16-20V12z"/><path d="M17 24l5 5 9-10"/></g></symbol>
+    <symbol id="ico-ig" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></g></symbol>
+    <symbol id="ico-tiktok" viewBox="0 0 24 24"><path fill="currentColor" d="M16 3c.3 2.3 1.7 3.9 4 4.2v2.6c-1.4.1-2.7-.3-4-1v6.4c0 3.4-2.7 5.8-5.8 5.8-3 0-5.2-2.2-5.2-5.1 0-3 2.4-5.1 5.6-4.8v2.8c-.5-.1-1-.1-1.5 0-1.2.3-1.9 1.1-1.8 2.3.1 1.1 1 1.9 2.2 1.9 1.4 0 2.3-1 2.3-2.6V3z"/></symbol>
+    <symbol id="ico-wa" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15l-1.3 4.7 4.8-1.3A10 10 0 1 0 12 2zm5.3 14c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .1-1.7-.1-.4-.1-.9-.3-1.6-.6-2.8-1.2-4.6-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.8 0-1.3.7-2 .9-2.2.2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.3 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.5 1.8 1 .9 1.8 1.1 2.1 1.3.2.1.4.1.6-.1l.7-.8c.2-.2.3-.2.6-.1l2 .9c.2.1.4.2.4.3.1.1.1.6-.1 1.2z"/></symbol>
+  </defs>
+</svg>
+
+<!-- ===== header ===== -->
+<header id="header">
+  <div class="wrap nav">
+    <a class="brand" href="#top"><img src="assets/logo.png" alt="Bocado" /></a>
+    <nav class="nav-links">
+      <a href="#producto">Producto</a>
+      <a href="#preparar">Cómo preparar</a>
+      <a href="#porque">Por qué Bocado</a>
+      <a href="#comprar">Comprar</a>
+    </nav>
+    <div class="nav-cta">
+      <a class="btn btn-primary" href="#comprar">Pídelos ya <svg><use href="#ico-arrow"/></svg></a>
+      <button class="menu-btn" id="menuBtn" aria-label="Menú"><svg><use href="#ico-menu"/></svg></button>
+    </div>
+  </div>
+</header>
+
+<!-- mobile menu -->
+<div class="mobile-menu" id="mobileMenu">
+  <button class="mm-close" id="mmClose" aria-label="Cerrar"><svg><use href="#ico-x"/></svg></button>
+  <a href="#producto">Producto</a>
+  <a href="#preparar">Cómo preparar</a>
+  <a href="#porque">Por qué Bocado</a>
+  <a href="#comprar">Comprar</a>
+  <a class="btn btn-primary" href="#comprar">Pídelos ya</a>
+</div>
+
+<!-- ===== hero ===== -->
+<section class="hero" id="top">
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <span class="eyebrow"><svg><use href="#ico-heart"/></svg> Auténticamente venezolanos</span>
+      <h1>El tequeño <span class="pop">crujiente</span> y lleno de queso, listo en minutos.</h1>
+      <span class="hero-tag">Crunchy outside, cheesy inside.</span>
+      <p class="hero-sub">Tequeños congelados, hechos con queso de verdad e ingredientes de calidad. Del freezer a la mesa en el tiempo de un capítulo.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#comprar">Comprar ahora <svg><use href="#ico-arrow"/></svg></a>
+        <a class="btn btn-ghost" href="#preparar">Ver cómo se preparan</a>
+      </div>
+      <div class="hero-meta">
+        <div class="m"><svg><use href="#ico-clock"/></svg><div><b>12 min</b><span>en air fryer</span></div></div>
+        <div class="m"><svg><use href="#ico-cheese"/></svg><div><b>100%</b><span>queso real</span></div></div>
+        <div class="m"><svg><use href="#ico-snow"/></svg><div><b>20 uds</b><span>500 g por caja</span></div></div>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="hero-blob"></div>
+      <div class="hero-plate"><img src="assets/img/p2.jpg" alt="Tequeños Bocado compartidos, estirando el queso" /></div>
+      <div class="float-chip fc1"><svg><use href="#ico-snow"/></svg> Congelados para frescura</div>
+      <div class="float-chip fc2"><svg><use href="#ico-leaf"/></svg> Ingredientes de calidad</div>
+      <div class="seal">HECHO CON<span class="big">QUESO</span>Y MUCHO AMOR</div>
+    </div>
+  </div>
+  <svg class="wave" viewBox="0 0 1440 70" preserveAspectRatio="none"><path fill="currentColor" d="M0,40 C240,75 480,5 720,30 C960,55 1200,75 1440,35 L1440,70 L0,70 Z"></path></svg>
+</section>
+
+<!-- ===== benefits ===== -->
+<section class="benefits">
+  <div class="wrap">
+    <div class="benefit-row">
+      <div class="benefit reveal"><div class="ic"><svg><use href="#ico-heart"/></svg></div><b>Auténticamente venezolanos</b><p>La receta de siempre, esa que sabe a casa.</p></div>
+      <div class="benefit reveal"><div class="ic"><svg><use href="#ico-cheese"/></svg></div><b>Queso de verdad</b><p>Relleno generoso que estira en cada mordida.</p></div>
+      <div class="benefit reveal"><div class="ic"><svg><use href="#ico-leaf"/></svg></div><b>Ingredientes de calidad</b><p>Masa fresca, sin rellenos raros ni atajos.</p></div>
+      <div class="benefit reveal"><div class="ic"><svg><use href="#ico-snow"/></svg></div><b>Congelados para frescura</b><p>Listos cuando tú quieras, sin perder sabor.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== product / cheese pull ===== -->
+<section class="sec product" id="producto">
+  <div class="wrap product-grid">
+    <div class="product-photo reveal">
+      <span class="tag">🧀 Queso que estira</span>
+      <img src="assets/img/p5.jpg" alt="Tequeño Bocado partido mostrando el queso derretido" />
+    </div>
+    <div class="product-copy reveal">
+      <span class="kicker"><span class="dot"></span> El bocado perfecto</span>
+      <h2>Crujiente por fuera. Puro queso por dentro.</h2>
+      <p class="lead">Cada tequeño Bocado envuelve queso blanco venezolano en una masa dorada que cruje al primer mordisco. El antojo que une la mesa — en reuniones, meriendas o ese momento de "solo uno más".</p>
+      <ul class="tick-list">
+        <li><span class="tk"><svg><use href="#ico-check"/></svg></span><div><b>Relleno generoso de queso</b><span>Estira de verdad, no se queda corto.</span></div></li>
+        <li><span class="tk"><svg><use href="#ico-check"/></svg></span><div><b>Masa que dora parejo</b><span>Crocante por fuera, suave por dentro.</span></div></li>
+        <li><span class="tk"><svg><use href="#ico-check"/></svg></span><div><b>Sin freír en aceite</b><span>En air fryer u horno, igual de rico.</span></div></li>
+      </ul>
+      <div class="hero-actions"><a class="btn btn-primary" href="#comprar">Quiero los míos <svg><use href="#ico-arrow"/></svg></a></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== how to prepare ===== -->
+<section class="sec" id="preparar">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="kicker"><span class="dot"></span> Listos para preparar</span>
+      <h2>Del freezer a la mesa, en minutos</h2>
+      <p>Sin descongelar. Elige tu método favorito y disfruta tequeños recién hechos cuando se te antoje.</p>
+    </div>
+    <div class="steps">
+      <div class="step-card reveal">
+        <div class="head">
+          <div class="badge"><svg><use href="#ico-airfryer"/></svg></div>
+          <div><h3>Air Fryer</h3><div class="time"><svg><use href="#ico-clock"/></svg> 12–14 minutos</div></div>
+        </div>
+        <ol>
+          <li>Precalienta la air fryer a 180&nbsp;°C.</li>
+          <li>Acomoda los tequeños sin amontonar, directo del congelador.</li>
+          <li>Cocina 12–14 min hasta que estén dorados y crujientes.</li>
+          <li>Deja reposar 1 minuto… y a disfrutar.</li>
+        </ol>
+      </div>
+      <div class="step-card reveal">
+        <div class="head">
+          <div class="badge"><svg><use href="#ico-oven"/></svg></div>
+          <div><h3>Horno</h3><div class="time"><svg><use href="#ico-clock"/></svg> 15–18 minutos</div></div>
+        </div>
+        <ol>
+          <li>Precalienta el horno a 200&nbsp;°C.</li>
+          <li>Coloca los tequeños en una bandeja con papel encerado.</li>
+          <li>Hornea 15–18 min, voltea a la mitad para dorar parejo.</li>
+          <li>Sirve calientes, solos o con tu salsa favorita.</li>
+        </ol>
+      </div>
+    </div>
+    <p class="prep-note reveal"><b>Tip Bocado:</b> nada de descongelar — del frío al calor para que queden bien crujientes. ❄️→🔥</p>
+  </div>
+</section>
+
+<!-- ===== gallery ===== -->
+<section class="sec gallery">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="kicker"><span class="dot"></span> Hecho con queso y mucho amor</span>
+      <h2>Antojo a la vista</h2>
+    </div>
+    <div class="gal-grid reveal">
+      <figure class="span2 row2"><img src="assets/img/p6.jpg" alt="Amigos compartiendo tequeños Bocado" /></figure>
+      <figure><img src="assets/img/p4.jpg" alt="Disfrutando un tequeño Bocado" /></figure>
+      <figure><img src="assets/img/p1.jpg" alt="Plato de tequeños Bocado con queso derretido" /></figure>
+      <figure class="span2"><img src="assets/img/p7.jpg" alt="Tequeños Bocado vista superior con salsas" /></figure>
+      <figure><img src="assets/img/p9.jpg" alt="Tequeño Bocado con salsa de queso" /></figure>
+      <figure><img src="assets/img/p10.jpg" alt="Tequeño Bocado recién servido" /></figure>
+      <figure class="gal-card"><span class="num">+50k</span><span>bocados disfrutados</span></figure>
+      <figure><img src="assets/img/p3.jpg" alt="Caja Bocado abierta con tequeños" /></figure>
+    </div>
+  </div>
+</section>
+
+<!-- ===== order ===== -->
+<section class="sec order" id="comprar">
+  <div class="wrap order-grid">
+    <div class="order-copy reveal">
+      <span class="kicker"><span class="dot"></span> Pídelos a casa</span>
+      <h2>Llena tu freezer de antojos</h2>
+      <p class="lead">Una caja siempre alcanza para hoy… y para la visita sorpresa. Entrega congelada para que lleguen tan frescos como salieron.</p>
+      <div class="assure">
+        <div class="a"><div class="ic"><svg><use href="#ico-truck"/></svg></div><div><b>Envío congelado</b><span>Entrega en 24–48 h, cadena de frío garantizada.</span></div></div>
+        <div class="a"><div class="ic"><svg><use href="#ico-shield"/></svg></div><div><b>Frescura garantizada</b><span>Si no te encanta, te devolvemos tu compra.</span></div></div>
+        <div class="a"><div class="ic"><svg><use href="#ico-snow"/></svg></div><div><b>Mantén congelado</b><span>Conserva a −18&nbsp;°C hasta el momento de preparar.</span></div></div>
+      </div>
+    </div>
+    <div class="price-card reveal">
+      <div class="ribbon">MÁS VENDIDO</div>
+      <div class="pc-top">
+        <div class="pic"><img src="assets/img/p8.jpg" alt="Caja Bocado" style="object-position:left center" /></div>
+        <div>
+          <h3>Caja Bocado</h3>
+          <div class="specs">
+            <span class="spec"><svg><use href="#ico-roll"/></svg> 20 unidades</span>
+            <span class="spec"><svg><use href="#ico-snow"/></svg> 500 g</span>
+          </div>
+          <div class="rating"><span class="stars"><svg><use href="#ico-star"/></svg><svg><use href="#ico-star"/></svg><svg><use href="#ico-star"/></svg><svg><use href="#ico-star"/></svg><svg><use href="#ico-star"/></svg></span> 4.9 · 1.2k reseñas</div>
+        </div>
+      </div>
+      <div class="price-row">
+        <span class="now" id="totalPrice">$12.99</span>
+        <span class="was">$15.99</span>
+        <span class="each" id="eachNote">$12.99 c/u · ahorra 18%</span>
+      </div>
+      <div class="qty-row">
+        <div class="stepper">
+          <button id="minus" aria-label="Quitar uno">−</button>
+          <span class="count" id="qty">1</span>
+          <button id="plus" aria-label="Agregar uno">+</button>
+        </div>
+        <button class="btn btn-primary" id="addBtn">Agregar al carrito <svg><use href="#ico-arrow"/></svg></button>
+      </div>
+      <div class="pc-foot"><svg><use href="#ico-truck"/></svg> Envío gratis en pedidos de 3 cajas o más</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== where to buy ===== -->
+<section class="sec where">
+  <div class="wrap">
+    <div class="sec-head reveal" style="margin-bottom:34px">
+      <span class="kicker"><span class="dot"></span> También en tienda</span>
+      <h2>Encuéntranos cerca de ti</h2>
+      <p>Disponible en la sección de congelados de tus supermercados favoritos.</p>
+    </div>
+    <div class="retailers reveal">
+      <div class="retailer"><span class="d"></span> Mercado Sur</div>
+      <div class="retailer"><span class="d"></span> FreshMart</div>
+      <div class="retailer"><span class="d"></span> El Abasto</div>
+      <div class="retailer"><span class="d"></span> SuperÑ</div>
+      <div class="retailer"><span class="d"></span> La Nevera</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== newsletter band ===== -->
+<section class="cta-band">
+  <div class="tequeno-bg"></div>
+  <div class="wrap cta-inner reveal">
+    <img class="logo-w" src="assets/logo-w.png" alt="Bocado" />
+    <h2>Únete a la familia Bocado</h2>
+    <p>Recetas, antojos y un 10% de descuento en tu primer pedido. Sin spam, solo queso.</p>
+    <form class="subscribe" id="subForm">
+      <input type="email" placeholder="tucorreo@ejemplo.com" required aria-label="Correo electrónico" />
+      <button class="btn" type="submit">Quiero mi 10%</button>
+    </form>
+    <p class="cta-mini">Al suscribirte aceptas recibir correos de Bocado. Cancela cuando quieras.</p>
+  </div>
+</section>
+
+<!-- ===== footer ===== -->
+<footer>
+  <div class="wrap foot-grid">
+    <div class="foot-brand">
+      <img src="assets/logo-w.png" alt="Bocado" />
+      <p>Tequeños venezolanos hechos con queso de verdad y mucho amor. Crunchy outside, cheesy inside.</p>
+      <div class="socials">
+        <a href="#" aria-label="Instagram"><svg><use href="#ico-ig"/></svg></a>
+        <a href="#" aria-label="TikTok"><svg><use href="#ico-tiktok"/></svg></a>
+        <a href="#" aria-label="WhatsApp"><svg><use href="#ico-wa"/></svg></a>
+      </div>
+    </div>
+    <div class="foot-col">
+      <h4>Producto</h4>
+      <a href="#producto">Nuestros tequeños</a>
+      <a href="#preparar">Cómo preparar</a>
+      <a href="#porque">Por qué Bocado</a>
+      <a href="#comprar">Comprar</a>
+    </div>
+    <div class="foot-col">
+      <h4>Ayuda</h4>
+      <a href="#">Preguntas frecuentes</a>
+      <a href="#">Envíos y entregas</a>
+      <a href="#">Contacto</a>
+      <a href="#">Mayoristas</a>
+    </div>
+    <div class="foot-col">
+      <h4>Bocado</h4>
+      <a href="#">Nuestra historia</a>
+      <a href="#">Trabaja con nosotros</a>
+      <a href="#">Términos</a>
+      <a href="#">Privacidad</a>
+    </div>
+  </div>
+  <div class="wrap foot-bar">
+    <span>© 2026 Bocado · Tequeños Venezolanos. Hecho con queso y mucho amor.</span>
+    <span>Mantener congelado a −18 °C · Listos para preparar</span>
+  </div>
+</footer>
+
+<!-- ===== toast ===== -->
+<div class="toast" id="toast"><span class="tk"><svg><use href="#ico-check"/></svg></span><span id="toastMsg">¡Agregado al carrito!</span></div>
+
+<script>
+// header shadow
+const header = document.getElementById('header');
+addEventListener('scroll', () => header.classList.toggle('scrolled', scrollY > 12));
+
+// mobile menu
+const mm = document.getElementById('mobileMenu');
+document.getElementById('menuBtn').onclick = () => mm.classList.add('open');
+document.getElementById('mmClose').onclick = () => mm.classList.remove('open');
+mm.querySelectorAll('a').forEach(a => a.onclick = () => mm.classList.remove('open'));
+
+// reveal on scroll (deterministic, no IntersectionObserver dependency)
+const reveals = [...document.querySelectorAll('.reveal')];
+function checkReveals(){
+  const vh = innerHeight || document.documentElement.clientHeight;
+  for (const el of reveals){
+    const r = el.getBoundingClientRect();
+    if (r.top < vh * 0.92 && r.bottom > 0) show(el);
+  }
+}
+function show(el){
+  if (el.dataset.shown) return;
+  el.dataset.shown = '1';
+  el.style.opacity = '1';
+  el.style.transform = 'none';
+}
+addEventListener('scroll', checkReveals, { passive:true });
+addEventListener('resize', checkReveals);
+checkReveals();
+requestAnimationFrame(checkReveals);
+addEventListener('load', checkReveals);
+// safety net: ensure everything shows even if events misbehave
+setTimeout(() => reveals.forEach(show), 1800);
+
+// quantity + price
+const UNIT = 12.99;
+let qty = 1;
+const qtyEl = document.getElementById('qty');
+const totalEl = document.getElementById('totalPrice');
+const eachEl = document.getElementById('eachNote');
+function fmt(n){ return '$' + n.toFixed(2); }
+function render(){
+  qtyEl.textContent = qty;
+  totalEl.textContent = fmt(UNIT * qty);
+  eachEl.textContent = fmt(UNIT) + ' c/u' + (qty >= 3 ? ' · envío gratis 🎉' : ' · ahorra 18%');
+}
+document.getElementById('plus').onclick = () => { if(qty < 20){ qty++; render(); } };
+document.getElementById('minus').onclick = () => { if(qty > 1){ qty--; render(); } };
+render();
+
+// toast
+const toast = document.getElementById('toast');
+const toastMsg = document.getElementById('toastMsg');
+let toastT;
+function showToast(msg){
+  toastMsg.textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(toastT);
+  toastT = setTimeout(() => toast.classList.remove('show'), 2600);
+}
+document.getElementById('addBtn').onclick = () => {
+  showToast('¡' + qty + (qty>1?' cajas agregadas':' caja agregada') + ' al carrito!');
+};
+document.getElementById('subForm').onsubmit = (e) => {
+  e.preventDefault();
+  e.target.reset();
+  showToast('¡Listo! Revisa tu correo para tu 10% 🧡');
+};
+</script>
+</body>
+</html>
