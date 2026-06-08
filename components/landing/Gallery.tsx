@@ -10,7 +10,7 @@ const PHOTOS = [
 
 export default function Gallery() {
   return (
-    <section style={{ backgroundColor: 'white', padding: '96px 26px' }}>
+    <section style={{ backgroundColor: 'white' }} className="section-pad">
       <div style={{ maxWidth: '1180px', margin: '0 auto' }}>
 
         <div style={{ textAlign: 'center', marginBottom: '48px' }}>

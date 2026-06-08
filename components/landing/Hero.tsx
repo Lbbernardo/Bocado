@@ -12,15 +12,13 @@ export default function Hero() {
         maxWidth: '1180px',
         margin: '0 auto',
         padding: '60px 26px 0',
-        display: 'grid',
-        gridTemplateColumns: '1fr 1fr',
         gap: '0',
         alignItems: 'center',
         minHeight: '620px',
       }} className="hero-grid">
 
         {/* ── COLUMNA IZQUIERDA ── */}
-        <div style={{ paddingRight: '40px', paddingBottom: '60px' }}>
+        <div className="hero-col-left">
 
           <div className="anim-fade" style={{
             display: 'inline-flex', alignItems: 'center', gap: '8px',
@@ -72,7 +70,7 @@ export default function Hero() {
             </a>
           </div>
 
-          <div className="anim-fade" style={{ display: 'flex', gap: '24px', paddingTop: '20px', borderTop: '1px solid rgba(0,0,0,.08)', animationDelay: '0.45s' }}>
+          <div className="anim-fade hero-stats" style={{ display: 'flex', gap: '24px', paddingTop: '20px', borderTop: '1px solid rgba(0,0,0,.08)', animationDelay: '0.45s' }}>
             {[
               { val: '12 min', label: 'en air fryer', icon: '⏱' },
               { val: '100%',   label: 'queso real',   icon: '🧀' },
@@ -90,7 +88,7 @@ export default function Hero() {
         </div>
 
         {/* ── COLUMNA DERECHA: blob + foto ── */}
-        <div className="anim-fade" style={{
+        <div className="anim-fade hero-col-right" style={{
           position: 'relative',
           height: '620px',
           animationDelay: '0.1s',

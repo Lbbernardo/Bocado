@@ -25,7 +25,7 @@ const METHODS = [
 
 export default function HowToPrepare() {
   return (
-    <section id="preparar" style={{ backgroundColor: 'white', padding: '96px 26px' }}>
+    <section id="preparar" style={{ backgroundColor: 'white' }} className="section-pad">
       <div style={{ maxWidth: '1180px', margin: '0 auto' }}>
 
         {/* Header */}

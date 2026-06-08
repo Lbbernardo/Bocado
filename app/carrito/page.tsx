@@ -259,7 +259,7 @@ export default function CarritoPage() {
 
           <div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: '20px', alignItems: 'start' }} className="cart-grid">
+            <div style={{ alignItems: 'start' }} className="cart-grid">
 
               {/* ── LEFT: items + form ── */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
@@ -471,11 +471,6 @@ export default function CarritoPage() {
         </div>
       </div>
 
-      <style>{`
-        @media (max-width: 768px) {
-          .cart-grid { grid-template-columns: 1fr !important; }
-        }
-      `}</style>
     </>
   )
 }

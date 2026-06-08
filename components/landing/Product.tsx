@@ -2,7 +2,7 @@ import Image from 'next/image'
 
 export default function Product() {
   return (
-    <section id="producto" style={{ backgroundColor: '#FBF5E9', padding: '96px 26px' }}>
+    <section id="producto" style={{ backgroundColor: '#FBF5E9' }} className="section-pad">
       <div style={{ maxWidth: '1180px', margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '64px', alignItems: 'center' }} className="product-grid">
 
         {/* Foto */}

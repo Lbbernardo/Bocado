@@ -18,10 +18,9 @@ export default function Newsletter() {
   return (
     <section style={{
       backgroundColor: '#FF9E00',
-      padding: '96px 26px',
       position: 'relative',
       overflow: 'hidden',
-    }}>
+    }} className="section-pad">
       {/* Pattern background */}
       <div style={{
         position: 'absolute', inset: 0,

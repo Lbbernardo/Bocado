@@ -130,7 +130,7 @@ export default function BuySection({ products }: Props) {
   const badges = ['⭐ Más vendido', undefined, undefined]
 
   return (
-    <section id="comprar" style={{ backgroundColor: '#FBF5E9', padding: '80px 26px' }}>
+    <section id="comprar" style={{ backgroundColor: '#FBF5E9' }} className="section-pad-sm">
       <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
 
         {/* Header */}
