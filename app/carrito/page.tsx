@@ -32,18 +32,13 @@ type Form = z.infer<typeof schema>
 
 // ─── Sub-components ──────────────────────────────────────────────────────────
 
-function Input({ label, error, icon, ...props }: React.InputHTMLAttributes<HTMLInputElement> & { label: string; error?: string; icon?: React.ReactNode }) {
+function Field({ label, error, icon, children }: { label: string; error?: string; icon?: React.ReactNode; children: React.ReactNode }) {
   return (
     <div>
       <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.82rem', fontWeight: 600, color: '#6B6358', marginBottom: '6px' }}>
         {icon}{label}
       </label>
-      <input {...props} style={{
-        width: '100%', border: `1.5px solid ${error ? '#FCA5A5' : '#E5E0D8'}`,
-        borderRadius: '12px', padding: '11px 14px', fontSize: '0.9rem',
-        outline: 'none', backgroundColor: 'white', boxSizing: 'border-box',
-        transition: 'border-color .2s',
-      }} />
+      {children}
       {error && <p style={{ color: '#EF4444', fontSize: '0.75rem', marginTop: '4px' }}>{error}</p>}
     </div>
   )
@@ -302,8 +297,21 @@ export default function CarritoPage() {
                     <User size={16} color="#FF9E00" /> Tus datos
                   </p>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                    <Input label="Nombre completo *" placeholder="María García" error={errors.customer_name?.message} {...register('customer_name')} />
-                    <Input label="WhatsApp / Teléfono *" placeholder="+1 (555) 000-0000" type="tel" error={errors.customer_phone?.message} icon={<Phone size={12} />} {...register('customer_phone')} />
+                    <Field label="Nombre completo *" error={errors.customer_name?.message}>
+                      <input
+                        {...register('customer_name')}
+                        placeholder="María García"
+                        style={{ width: '100%', border: `1.5px solid ${errors.customer_name ? '#FCA5A5' : '#E5E0D8'}`, borderRadius: '12px', padding: '11px 14px', fontSize: '0.9rem', outline: 'none', backgroundColor: 'white', boxSizing: 'border-box' }}
+                      />
+                    </Field>
+                    <Field label="WhatsApp / Teléfono *" error={errors.customer_phone?.message} icon={<Phone size={12} />}>
+                      <input
+                        {...register('customer_phone')}
+                        placeholder="+1 (555) 000-0000"
+                        type="tel"
+                        style={{ width: '100%', border: `1.5px solid ${errors.customer_phone ? '#FCA5A5' : '#E5E0D8'}`, borderRadius: '12px', padding: '11px 14px', fontSize: '0.9rem', outline: 'none', backgroundColor: 'white', boxSizing: 'border-box' }}
+                      />
+                    </Field>
                   </div>
                 </div>
 
@@ -344,7 +352,13 @@ export default function CarritoPage() {
                   )}
 
                   {deliveryMethod === 'delivery' && (
-                    <Input label="Dirección de entrega *" placeholder="123 Calle Principal, Ciudad" error={errors.delivery_address?.message} {...register('delivery_address')} />
+                    <Field label="Dirección de entrega *" error={errors.delivery_address?.message}>
+                      <input
+                        {...register('delivery_address')}
+                        placeholder="123 Calle Principal, Ciudad"
+                        style={{ width: '100%', border: `1.5px solid ${errors.delivery_address ? '#FCA5A5' : '#E5E0D8'}`, borderRadius: '12px', padding: '11px 14px', fontSize: '0.9rem', outline: 'none', backgroundColor: 'white', boxSizing: 'border-box' }}
+                      />
+                    </Field>
                   )}
                 </div>
 
