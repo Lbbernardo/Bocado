@@ -2,9 +2,6 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
 import Image from 'next/image'
 import Link from 'next/link'
 import {
@@ -17,20 +14,16 @@ import { useCart } from '@/store/cart'
 import { formatCurrency } from '@/lib/utils'
 import type { StoreConfig } from '@/lib/types'
 
-const schema = z.object({
-  customer_name: z.string().min(2, 'Nombre requerido'),
-  customer_phone: z.string().min(7, 'Teléfono requerido').regex(/^[\d\s+\-()+]+$/, 'Teléfono inválido'),
-  delivery_method: z.enum(['pickup', 'delivery']),
-  delivery_address: z.string().optional(),
-  customer_note: z.string().optional(),
-}).refine((d) => {
-  if (d.delivery_method === 'delivery') return d.delivery_address && d.delivery_address.length > 5
-  return true
-}, { message: 'Dirección requerida para delivery', path: ['delivery_address'] })
-
-type Form = z.infer<typeof schema>
-
-// ─── Sub-components ──────────────────────────────────────────────────────────
+const inputStyle = (err?: string) => ({
+  width: '100%',
+  border: `1.5px solid ${err ? '#FCA5A5' : '#E5E0D8'}`,
+  borderRadius: '12px',
+  padding: '11px 14px',
+  fontSize: '0.9rem',
+  outline: 'none',
+  backgroundColor: 'white',
+  boxSizing: 'border-box' as const,
+})
 
 function Field({ label, error, icon, children }: { label: string; error?: string; icon?: React.ReactNode; children: React.ReactNode }) {
   return (
@@ -56,16 +49,27 @@ export default function CarritoPage() {
   const [zelleLoading, setZelleLoading] = useState(false)
   const [zelleCopied, setZelleCopied] = useState(false)
   const [submitting, setSubmitting] = useState(false)
-  const payMethodRef = useRef<'stripe' | 'zelle'>('zelle')
   const [error, setError] = useState('')
 
-  const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<Form>({
-    resolver: zodResolver(schema),
-    defaultValues: { delivery_method: 'pickup' },
-  })
-  const deliveryMethod = watch('delivery_method')
+  // Form state — plain useState, no library
+  const [name, setName] = useState('')
+  const [phone, setPhone] = useState('')
+  const [deliveryMethod, setDeliveryMethod] = useState<'pickup' | 'delivery'>('pickup')
+  const [address, setAddress] = useState('')
+  const [note, setNote] = useState('')
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
+
   const deliveryFee = deliveryMethod === 'delivery' ? (config?.delivery_fee ?? 0) : 0
   const total = subtotal + deliveryFee
+
+  function validate() {
+    const errs: Record<string, string> = {}
+    if (name.trim().length < 2) errs.name = 'Nombre requerido (mínimo 2 caracteres)'
+    if (phone.trim().length < 7) errs.phone = 'Teléfono requerido'
+    if (deliveryMethod === 'delivery' && address.trim().length < 5) errs.address = 'Dirección requerida para delivery'
+    setFieldErrors(errs)
+    return Object.keys(errs).length === 0
+  }
 
   useEffect(() => {
     // Mark hydrated after client mount — Zustand rehydrates from localStorage after mount
@@ -184,17 +188,21 @@ export default function CarritoPage() {
     )
   }
 
-  // ── Submit ──
-  async function onSubmit(data: Form) {
+  // ── Pay ──
+  async function handlePay(method: 'stripe' | 'zelle') {
+    if (!validate()) return
     setSubmitting(true)
     setError('')
     try {
-      // 1. Create order
       const res = await fetch('/api/orders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          ...data,
+          customer_name: name.trim(),
+          customer_phone: phone.trim(),
+          delivery_method: deliveryMethod,
+          delivery_address: address.trim() || undefined,
+          customer_note: note.trim() || undefined,
           items: items.map(i => ({
             product_id: i.product.id,
             product_name: i.product.name,
@@ -210,8 +218,7 @@ export default function CarritoPage() {
 
       setOrderNumber(result.order_number)
 
-      // 2. Handle payment method
-      if (payMethodRef.current === 'stripe') {
+      if (method === 'stripe') {
         const sr = await fetch('/api/stripe/create-session', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -219,10 +226,10 @@ export default function CarritoPage() {
         })
         const sd = await sr.json()
         if (!sr.ok) throw new Error(sd.error || 'Stripe no está configurado. Usa Zelle.')
-        clearCart() // only clear after Stripe session confirmed
+        clearCart()
         window.location.href = sd.url
       } else {
-        clearCart() // clear cart then show Zelle instructions
+        clearCart()
         setStep('zelle')
       }
     } catch (e: unknown) {
@@ -250,7 +257,7 @@ export default function CarritoPage() {
             </div>
           </div>
 
-          <form onSubmit={handleSubmit(onSubmit)}>
+          <div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: '20px', alignItems: 'start' }} className="cart-grid">
 
@@ -297,19 +304,21 @@ export default function CarritoPage() {
                     <User size={16} color="#FF9E00" /> Tus datos
                   </p>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                    <Field label="Nombre completo *" error={errors.customer_name?.message}>
+                    <Field label="Nombre completo *" error={fieldErrors.name}>
                       <input
-                        {...register('customer_name')}
+                        value={name}
+                        onChange={e => { setName(e.target.value); setFieldErrors(p => ({ ...p, name: '' })) }}
                         placeholder="María García"
-                        style={{ width: '100%', border: `1.5px solid ${errors.customer_name ? '#FCA5A5' : '#E5E0D8'}`, borderRadius: '12px', padding: '11px 14px', fontSize: '0.9rem', outline: 'none', backgroundColor: 'white', boxSizing: 'border-box' }}
+                        style={inputStyle(fieldErrors.name)}
                       />
                     </Field>
-                    <Field label="WhatsApp / Teléfono *" error={errors.customer_phone?.message} icon={<Phone size={12} />}>
+                    <Field label="WhatsApp / Teléfono *" error={fieldErrors.phone} icon={<Phone size={12} />}>
                       <input
-                        {...register('customer_phone')}
+                        value={phone}
+                        onChange={e => { setPhone(e.target.value); setFieldErrors(p => ({ ...p, phone: '' })) }}
                         placeholder="+1 (555) 000-0000"
                         type="tel"
-                        style={{ width: '100%', border: `1.5px solid ${errors.customer_phone ? '#FCA5A5' : '#E5E0D8'}`, borderRadius: '12px', padding: '11px 14px', fontSize: '0.9rem', outline: 'none', backgroundColor: 'white', boxSizing: 'border-box' }}
+                        style={inputStyle(fieldErrors.phone)}
                       />
                     </Field>
                   </div>
@@ -332,7 +341,7 @@ export default function CarritoPage() {
                         backgroundColor: deliveryMethod === val ? '#FFF8EE' : 'white',
                         borderRadius: '14px', padding: '14px', transition: 'all .2s',
                       }}>
-                        <input type="radio" value={val} disabled={disabled} {...register('delivery_method')} onChange={() => setValue('delivery_method', val as 'pickup' | 'delivery')} style={{ display: 'none' }} />
+                        <input type="radio" value={val} disabled={disabled} checked={deliveryMethod === val} onChange={() => setDeliveryMethod(val as 'pickup' | 'delivery')} style={{ display: 'none' }} />
                         <div style={{ fontSize: '20px', marginBottom: '6px' }}>{emoji}</div>
                         <p style={{ fontWeight: 700, color: '#2E2A24', fontSize: '0.88rem' }}>{label}</p>
                         <p style={{ color: deliveryMethod === val ? '#FF9E00' : '#6B6358', fontSize: '0.78rem', marginTop: '2px' }}>{sub}</p>
@@ -352,11 +361,12 @@ export default function CarritoPage() {
                   )}
 
                   {deliveryMethod === 'delivery' && (
-                    <Field label="Dirección de entrega *" error={errors.delivery_address?.message}>
+                    <Field label="Dirección de entrega *" error={fieldErrors.address}>
                       <input
-                        {...register('delivery_address')}
+                        value={address}
+                        onChange={e => { setAddress(e.target.value); setFieldErrors(p => ({ ...p, address: '' })) }}
                         placeholder="123 Calle Principal, Ciudad"
-                        style={{ width: '100%', border: `1.5px solid ${errors.delivery_address ? '#FCA5A5' : '#E5E0D8'}`, borderRadius: '12px', padding: '11px 14px', fontSize: '0.9rem', outline: 'none', backgroundColor: 'white', boxSizing: 'border-box' }}
+                        style={inputStyle(fieldErrors.address)}
                       />
                     </Field>
                   )}
@@ -367,7 +377,7 @@ export default function CarritoPage() {
                   <label style={{ fontWeight: 700, color: '#2E2A24', fontSize: '0.9rem', display: 'block', marginBottom: '8px' }}>
                     Nota adicional <span style={{ color: '#6B6358', fontWeight: 400, fontSize: '0.8rem' }}>(opcional)</span>
                   </label>
-                  <textarea {...register('customer_note')} placeholder="Ej: sin sal, para una reunión, etc." rows={2} style={{ width: '100%', border: '1.5px solid #E5E0D8', borderRadius: '12px', padding: '11px 14px', fontSize: '0.9rem', outline: 'none', resize: 'none', boxSizing: 'border-box' }} />
+                  <textarea value={note} onChange={e => setNote(e.target.value)} placeholder="Ej: sin sal, para una reunión, etc." rows={2} style={{ width: '100%', border: '1.5px solid #E5E0D8', borderRadius: '12px', padding: '11px 14px', fontSize: '0.9rem', outline: 'none', resize: 'none', boxSizing: 'border-box' }} />
                 </div>
               </div>
 
@@ -407,7 +417,7 @@ export default function CarritoPage() {
                     <button
                       type="button"
                       disabled={submitting}
-                      onClick={() => { payMethodRef.current = 'stripe'; handleSubmit(onSubmit)() }}
+                      onClick={() => handlePay('stripe')}
                       style={{
                         width: '100%', backgroundColor: '#4F46E5', color: 'white',
                         fontWeight: 700, fontSize: '0.95rem', padding: '15px', borderRadius: '14px',
@@ -423,7 +433,7 @@ export default function CarritoPage() {
                     <button
                       type="button"
                       disabled={submitting}
-                      onClick={() => { payMethodRef.current = 'zelle'; handleSubmit(onSubmit)() }}
+                      onClick={() => handlePay('zelle')}
                       style={{
                         width: '100%', backgroundColor: '#7C3AED', color: 'white',
                         fontWeight: 700, fontSize: '0.95rem', padding: '15px', borderRadius: '14px',
@@ -439,7 +449,7 @@ export default function CarritoPage() {
                     <button
                       type="button"
                       disabled={submitting}
-                      onClick={() => { payMethodRef.current = 'zelle'; handleSubmit(onSubmit)() }}
+                      onClick={() => handlePay('zelle')}
                       style={{
                         width: '100%', backgroundColor: '#FF9E00', color: 'white',
                         fontWeight: 700, fontSize: '1rem', padding: '16px', borderRadius: '14px',
@@ -457,7 +467,7 @@ export default function CarritoPage() {
                 </div>
               </div>
             </div>
-          </form>
+          </div>
         </div>
       </div>
 
