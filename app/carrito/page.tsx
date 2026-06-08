@@ -404,37 +404,49 @@ export default function CarritoPage() {
                 {/* Payment buttons */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                   {config?.stripe_enabled && (
-                    <button type="submit" disabled={submitting} onClick={() => { payMethodRef.current = 'stripe' }} style={{
-                      width: '100%', backgroundColor: '#4F46E5', color: 'white',
-                      fontWeight: 700, fontSize: '0.95rem', padding: '15px', borderRadius: '14px',
-                      border: 'none', cursor: submitting ? 'not-allowed' : 'pointer',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-                      opacity: submitting ? 0.7 : 1,
-                    }}>
+                    <button
+                      type="button"
+                      disabled={submitting}
+                      onClick={() => { payMethodRef.current = 'stripe'; handleSubmit(onSubmit)() }}
+                      style={{
+                        width: '100%', backgroundColor: '#4F46E5', color: 'white',
+                        fontWeight: 700, fontSize: '0.95rem', padding: '15px', borderRadius: '14px',
+                        border: 'none', cursor: submitting ? 'not-allowed' : 'pointer',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+                        opacity: submitting ? 0.7 : 1,
+                      }}>
                       <CreditCard size={17} /> Pagar con tarjeta
                     </button>
                   )}
 
                   {config?.zelle_enabled && (
-                    <button type="submit" disabled={submitting} onClick={() => { payMethodRef.current = 'zelle' }} style={{
-                      width: '100%', backgroundColor: '#7C3AED', color: 'white',
-                      fontWeight: 700, fontSize: '0.95rem', padding: '15px', borderRadius: '14px',
-                      border: 'none', cursor: submitting ? 'not-allowed' : 'pointer',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-                      opacity: submitting ? 0.7 : 1,
-                    }}>
+                    <button
+                      type="button"
+                      disabled={submitting}
+                      onClick={() => { payMethodRef.current = 'zelle'; handleSubmit(onSubmit)() }}
+                      style={{
+                        width: '100%', backgroundColor: '#7C3AED', color: 'white',
+                        fontWeight: 700, fontSize: '0.95rem', padding: '15px', borderRadius: '14px',
+                        border: 'none', cursor: submitting ? 'not-allowed' : 'pointer',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+                        opacity: submitting ? 0.7 : 1,
+                      }}>
                       <Smartphone size={17} /> Pagar con Zelle
                     </button>
                   )}
 
                   {!config?.stripe_enabled && !config?.zelle_enabled && (
-                    <button type="submit" disabled={submitting} onClick={() => { payMethodRef.current = 'zelle' }} style={{
-                      width: '100%', backgroundColor: '#FF9E00', color: 'white',
-                      fontWeight: 700, fontSize: '1rem', padding: '16px', borderRadius: '14px',
-                      border: 'none', cursor: submitting ? 'not-allowed' : 'pointer',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-                      opacity: submitting ? 0.7 : 1, boxShadow: '0 8px 30px rgba(255,158,0,.35)',
-                    }}>
+                    <button
+                      type="button"
+                      disabled={submitting}
+                      onClick={() => { payMethodRef.current = 'zelle'; handleSubmit(onSubmit)() }}
+                      style={{
+                        width: '100%', backgroundColor: '#FF9E00', color: 'white',
+                        fontWeight: 700, fontSize: '1rem', padding: '16px', borderRadius: '14px',
+                        border: 'none', cursor: submitting ? 'not-allowed' : 'pointer',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+                        opacity: submitting ? 0.7 : 1, boxShadow: '0 8px 30px rgba(255,158,0,.35)',
+                      }}>
                       {submitting ? <><Loader2 size={18} className="animate-spin" /> Procesando...</> : <><ShoppingBag size={18} /> Confirmar pedido · {formatCurrency(total)}</>}
                     </button>
                   )}
