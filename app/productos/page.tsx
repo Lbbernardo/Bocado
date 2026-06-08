@@ -1,11 +1,11 @@
 import Navbar from '@/components/Navbar'
-import { createClient } from '@/lib/supabase/server'
+import { createPublicClient } from '@/lib/supabase/server'
 import ProductsClient from './ProductsClient'
 
 export const revalidate = 60
 
 export default async function ProductosPage() {
-  const supabase = createClient()
+  const supabase = createPublicClient()
   const { data: products } = await supabase
     .from('products')
     .select('*')

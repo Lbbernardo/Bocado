@@ -1,5 +1,14 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
+import { createClient as createSupabaseClient } from '@supabase/supabase-js'
 import { cookies } from 'next/headers'
+
+// Lightweight client for public data — no cookies needed
+export function createPublicClient() {
+  return createSupabaseClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
+}
 
 export function createClient() {
   const cookieStore = cookies()

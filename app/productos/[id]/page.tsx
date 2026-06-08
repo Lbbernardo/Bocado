@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server'
+import { createPublicClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
 import Navbar from '@/components/Navbar'
 import ProductDetail from './ProductDetail'
@@ -10,7 +10,7 @@ interface Props {
 }
 
 export async function generateMetadata({ params }: Props) {
-  const supabase = createClient()
+  const supabase = createPublicClient()
   const { data } = await supabase
     .from('products')
     .select('name, description')
@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: Props) {
 export const revalidate = 60
 
 export default async function ProductPage({ params }: Props) {
-  const supabase = createClient()
+  const supabase = createPublicClient()
   const { data: product } = await supabase
     .from('products')
     .select('*')
