@@ -134,3 +134,47 @@ body {
   background: #2a2a2a;
   border-radius: 2px;
 }
+
+/* Portada: contraste estable sobre el video y acciones accesibles en móvil. */
+.bocado-hero { position: relative; isolation: isolate; overflow: hidden; background: #211c16; padding: 118px 24px 48px; }
+.bocado-hero-video, .bocado-hero-shade { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; }
+.bocado-hero-video { object-fit: cover; }
+.bocado-hero-shade { background: rgba(20, 16, 12, .8); }
+.bocado-hero-content { max-width: 1180px; margin: 0 auto; color: #fffaf0; text-align: center; }
+.bocado-hero-eyebrow { display: inline-flex; align-items: center; gap: 8px; padding: 10px 14px; border: 1px solid #ffffff40; border-radius: 999px; font-size: 10px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; }
+.bocado-hero-eyebrow span { color: #ffae25; }
+.bocado-hero h1 { font-family: var(--font-display), sans-serif; font-size: clamp(2.1rem, 7.8vw, 3.5rem); line-height: 1.1; font-weight: 800; letter-spacing: -.025em; margin: 24px auto 16px; max-width: 680px; text-wrap: balance; }
+.bocado-hero h1 span { color: #ffae25; }
+.bocado-hero-description { max-width: 480px; margin: 0 auto; font-size: 16px; line-height: 1.65; }
+.bocado-hero-actions { display: flex; flex-direction: column; gap: 12px; margin: 26px auto; max-width: 360px; }
+.bocado-hero-actions a { display: inline-flex; justify-content: center; align-items: center; gap: 12px; min-height: 50px; padding: 12px 24px; border-radius: 12px; font-size: 14px; font-weight: 700; transition: background-color .2s; }
+.bocado-hero-primary { background: #ffa600; color: #241c10; }
+.bocado-hero-primary:hover { background: #ffbc40; }
+.bocado-hero-secondary { border: 1px solid #ffffff99; color: #fffaf0; background: #211c1640; }
+.bocado-hero-secondary:hover { background: #ffffff20; }
+.bocado-hero a:focus-visible { outline: 3px solid #fffaf0; outline-offset: 5px; }
+.bocado-hero-facts { display: flex; justify-content: center; gap: 16px; padding: 20px 0; margin: 0; border-top: 1px solid #ffffff40; list-style: none; }
+.bocado-hero-facts li { display: flex; flex-direction: column; gap: 4px; }
+.bocado-hero-facts strong { font-size: 13px; }
+.bocado-hero-facts span { font-size: 11px; color: #e1d9cd; }
+.bocado-hero-tracking { display: inline-block; padding: 12px 0; font-size: 12px; color: #e1d9cd; }
+.bocado-hero-tracking span { color: #ffbf55; text-decoration: underline; text-underline-offset: 3px; }
+@media (min-width: 600px) {
+  .bocado-hero { padding: 132px 36px 56px; }
+  .bocado-hero-actions { flex-direction: row; max-width: none; justify-content: center; }
+  .bocado-hero-facts { gap: 32px; max-width: 560px; margin: 0 auto; }
+}
+@media (min-width: 1025px) {
+  .bocado-hero { padding: 148px 48px 64px; }
+  .bocado-hero-shade { background: linear-gradient(90deg, rgba(20,16,12,.92) 0%, rgba(20,16,12,.82) 50%, rgba(20,16,12,.15) 100%); }
+  .bocado-hero-content { text-align: left; }
+  .bocado-hero h1 { max-width: 600px; margin-left: 0; font-size: 3.75rem; }
+  .bocado-hero-description, .bocado-hero-facts { margin-left: 0; }
+  .bocado-hero-actions, .bocado-hero-facts { justify-content: flex-start; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bocado-hero-video { display: none; }
+  .bocado-hero-actions a { transition: none; }
+}
+/* Mantiene las tarjetas de beneficios por encima del borde de la portada. */
+.bocado-hero + section { position: relative; }
