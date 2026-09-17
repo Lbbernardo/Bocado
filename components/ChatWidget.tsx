@@ -1,36 +1,92 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { MessageCircle, X, Send, Bot } from 'lucide-react'
+import { MessageCircle, X, Send, Bot, Phone } from 'lucide-react'
+import type { StoreConfig } from '@/lib/types'
 
 interface Message {
   role: 'user' | 'assistant'
   content: string
 }
 
-const QUICK_QUESTIONS = [
-  '¿Cómo hago un pedido?',
-  '¿Tienen delivery?',
-  '¿Cuándo puedo retirar?',
-  '¿Cómo sigo mi pedido?',
+interface QuickTopic {
+  question: string
+  answer: (config: Partial<StoreConfig> | null) => string
+}
+
+const QUICK_TOPICS: QuickTopic[] = [
+  {
+    question: '¿Cómo hago un pedido?',
+    answer: () =>
+      'Fácil: 1) elige tus productos en /productos y agrégalos al carrito 2) ve al carrito y llena tus datos 3) elige retiro o delivery y paga 4) te llega un número de pedido y un correo de confirmación. ¡Listo! 🧀',
+  },
+  {
+    question: '¿Tienen delivery?',
+    answer: (config) => {
+      if (!config?.delivery_enabled) {
+        return 'Por ahora no tenemos delivery activo, solo retiro en punto. ¡Pero pronto puede que sí! 📦'
+      }
+      const fee = config.delivery_fee ? ` con un costo de $${config.delivery_fee}` : ''
+      const zones = config.delivery_zones ? ` Zonas: ${config.delivery_zones}.` : ''
+      return `¡Sí! Hacemos delivery${fee}.${zones}`.trim()
+    },
+  },
+  {
+    question: '¿Cuándo puedo retirar?',
+    answer: (config) => {
+      if (!config?.pickup_enabled) {
+        return 'El retiro en punto está desactivado por ahora. Escríbenos por WhatsApp para más info.'
+      }
+      const parts: string[] = []
+      if (config.pickup_date) parts.push(`📅 ${config.pickup_date}`)
+      if (config.pickup_start_time) parts.push(`🕐 ${config.pickup_start_time}${config.pickup_end_time ? ` – ${config.pickup_end_time}` : ''}`)
+      if (config.pickup_address) parts.push(`📍 ${config.pickup_address}`)
+      return parts.length
+        ? `Puedes retirar tu pedido aquí: ${parts.join(' · ')}`
+        : 'La info de retiro está en el banner de la página principal.'
+    },
+  },
+  {
+    question: '¿Cómo sigo mi pedido?',
+    answer: () =>
+      'Entra a /pedido/buscar y pon tu número de teléfono o el número de pedido (BOC-AÑO-XXXX) para ver el estado en tiempo real. 📦',
+  },
 ]
+
+const KEYWORDS: { match: RegExp; topic: number }[] = [
+  { match: /pedid|compr|orden|carrito/i, topic: 0 },
+  { match: /deliver|envio|env[íi]o/i, topic: 1 },
+  { match: /retir|recog|pickup|busc.*direcc/i, topic: 2 },
+  { match: /segui|tracking|estado|d[óo]nde.*pedido/i, topic: 3 },
+]
+
+function findAnswer(text: string, config: Partial<StoreConfig> | null): string | null {
+  const hit = KEYWORDS.find((k) => k.match.test(text))
+  return hit ? QUICK_TOPICS[hit.topic].answer(config) : null
+}
 
 export default function ChatWidget() {
   const [open, setOpen] = useState(false)
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
-  const [loading, setLoading] = useState(false)
   const [started, setStarted] = useState(false)
+  const [config, setConfig] = useState<Partial<StoreConfig> | null>(null)
   const bottomRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    fetch('/api/config')
+      .then((r) => r.json())
+      .then(setConfig)
+      .catch(() => {})
+  }, [])
 
   useEffect(() => {
     if (open && !started) {
       setMessages([
         {
           role: 'assistant',
-          content:
-            '¡Hola! Soy Cheddar, el asistente de BOCADO 🧀 ¿En qué te puedo ayudar?',
+          content: '¡Hola! Soy Cheddar, el asistente de BOCADO 🧀 ¿En qué te puedo ayudar?',
         },
       ])
       setStarted(true)
@@ -45,48 +101,23 @@ export default function ChatWidget() {
     if (open) inputRef.current?.focus()
   }, [open])
 
-  async function sendMessage(text: string) {
-    if (!text.trim() || loading) return
+  const whatsapp = config?.support_whatsapp_number ?? null
+  const whatsappHref = whatsapp
+    ? `https://wa.me/${whatsapp.replace(/[^\d]/g, '')}?text=${encodeURIComponent('¡Hola! Tengo una pregunta sobre BOCADO 🧀')}`
+    : null
 
+  function fallbackMessage() {
+    return whatsapp
+      ? 'No tengo una respuesta exacta para eso — escríbenos por WhatsApp y te ayudamos enseguida. 💬'
+      : 'No tengo una respuesta exacta para eso. Prueba con una de las preguntas rápidas de arriba.'
+  }
+
+  function sendMessage(text: string) {
+    if (!text.trim()) return
     const userMsg: Message = { role: 'user', content: text.trim() }
-    const history = [...messages, userMsg]
-    setMessages(history)
+    const answer = findAnswer(text, config) ?? fallbackMessage()
+    setMessages((prev) => [...prev, userMsg, { role: 'assistant', content: answer }])
     setInput('')
-    setLoading(true)
-
-    const assistantMsg: Message = { role: 'assistant', content: '' }
-    setMessages([...history, assistantMsg])
-
-    try {
-      const res = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          messages: history.map((m) => ({ role: m.role, content: m.content })),
-        }),
-      })
-
-      const reader = res.body!.getReader()
-      const decoder = new TextDecoder()
-      let full = ''
-
-      while (true) {
-        const { done, value } = await reader.read()
-        if (done) break
-        full += decoder.decode(value, { stream: true })
-        setMessages([...history, { role: 'assistant', content: full }])
-      }
-    } catch {
-      setMessages([
-        ...history,
-        {
-          role: 'assistant',
-          content: 'Lo siento, hubo un error. Escríbenos por WhatsApp.',
-        },
-      ])
-    } finally {
-      setLoading(false)
-    }
   }
 
   function handleKey(e: React.KeyboardEvent) {
@@ -110,6 +141,17 @@ export default function ChatWidget() {
               <p className="text-white font-bold text-sm leading-tight">Cheddar</p>
               <p className="text-gray-400 text-xs">Asistente BOCADO</p>
             </div>
+            {whatsappHref && (
+              <a
+                href={whatsappHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                title="Escríbenos por WhatsApp"
+                className="w-8 h-8 rounded-full bg-[#25D366] flex items-center justify-center text-white hover:scale-110 transition-transform flex-shrink-0"
+              >
+                <Phone size={14} />
+              </a>
+            )}
             <button
               onClick={() => setOpen(false)}
               className="text-gray-400 hover:text-white transition-colors p-1"
@@ -132,13 +174,7 @@ export default function ChatWidget() {
                       : 'bg-white text-bocado-dark shadow-sm rounded-bl-sm'
                   }`}
                 >
-                  {msg.content || (
-                    <span className="inline-flex gap-1">
-                      <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce [animation-delay:0ms]" />
-                      <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce [animation-delay:150ms]" />
-                      <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce [animation-delay:300ms]" />
-                    </span>
-                  )}
+                  {msg.content}
                 </div>
               </div>
             ))}
@@ -148,15 +184,25 @@ export default function ChatWidget() {
           {/* Quick questions (show only at start) */}
           {messages.length === 1 && (
             <div className="px-3 pb-2 pt-1 bg-bocado-cream border-t border-gray-100 flex flex-wrap gap-1.5">
-              {QUICK_QUESTIONS.map((q) => (
+              {QUICK_TOPICS.map((t) => (
                 <button
-                  key={q}
-                  onClick={() => sendMessage(q)}
+                  key={t.question}
+                  onClick={() => sendMessage(t.question)}
                   className="text-xs bg-white border border-bocado-orange text-bocado-orange rounded-full px-3 py-1 hover:bg-bocado-orange hover:text-white transition-colors font-medium"
                 >
-                  {q}
+                  {t.question}
                 </button>
               ))}
+              {whatsappHref && (
+                <a
+                  href={whatsappHref}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs bg-[#25D366] border border-[#25D366] text-white rounded-full px-3 py-1 hover:bg-[#1eb958] transition-colors font-medium flex items-center gap-1"
+                >
+                  <Phone size={11} /> Hablar por WhatsApp
+                </a>
+              )}
             </div>
           )}
 
@@ -168,12 +214,11 @@ export default function ChatWidget() {
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKey}
               placeholder="Escribe tu pregunta..."
-              disabled={loading}
-              className="flex-1 text-sm bg-bocado-cream rounded-full px-4 py-2.5 outline-none placeholder:text-gray-400 text-bocado-dark disabled:opacity-60"
+              className="flex-1 text-sm bg-bocado-cream rounded-full px-4 py-2.5 outline-none placeholder:text-gray-400 text-bocado-dark"
             />
             <button
               onClick={() => sendMessage(input)}
-              disabled={loading || !input.trim()}
+              disabled={!input.trim()}
               className="w-10 h-10 rounded-full bg-bocado-orange flex items-center justify-center text-white hover:bg-orange-500 transition-colors disabled:opacity-40 flex-shrink-0"
             >
               <Send size={15} />

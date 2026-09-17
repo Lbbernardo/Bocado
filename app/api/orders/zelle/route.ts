@@ -25,10 +25,12 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Este pedido ya tiene un pago registrado' }, { status: 400 })
     }
 
+    // El pedido se queda en "received" — un admin debe verificar el Zelle
+    // manualmente y pasarlo a "confirmed". payment_status marca que el
+    // cliente ya avisó que pagó, para que el admin lo note en el panel.
     const { error } = await supabase
       .from('orders')
       .update({
-        order_status: 'payment_pending',
         payment_method: 'zelle',
         payment_status: 'zelle_claimed',
         updated_at: new Date().toISOString(),
@@ -42,8 +44,9 @@ export async function POST(request: NextRequest) {
     await supabase.from('order_status_history').insert({
       order_id: order.id,
       old_status: 'received',
-      new_status: 'payment_pending',
+      new_status: 'received',
       changed_by: 'customer_zelle',
+      note: 'Cliente reportó pago por Zelle enviado — pendiente de verificar',
     })
 
     return NextResponse.json({ success: true })

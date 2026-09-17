@@ -119,7 +119,7 @@ export default function PagoPage() {
         <div className="min-h-screen bg-bocado-cream flex items-center justify-center p-4 pt-16">
           <div className="max-w-md w-full bg-white rounded-3xl p-8 shadow-sm text-center">
             <CheckCircle2 size={48} className="text-green-500 mx-auto mb-4" />
-            <h1 className="text-2xl font-black text-bocado-dark mb-2">
+            <h1 className="text-2xl font-fraunces font-bold text-bocado-dark mb-2">
               Pago ya registrado
             </h1>
             <p className="text-gray-500 text-sm mb-6">
@@ -148,7 +148,7 @@ export default function PagoPage() {
             <div className="text-bocado-yellow text-xs tracking-[0.25em] uppercase font-bold mb-2">
               · BOCADO ·
             </div>
-            <h1 className="text-3xl font-black text-bocado-dark">Elige cómo pagar</h1>
+            <h1 className="text-3xl font-fraunces font-bold text-bocado-dark">Elige cómo pagar</h1>
             <p className="text-gray-500 text-sm mt-1">
               Pedido{' '}
               <span className="font-bold text-bocado-orange">{orderNumber}</span>

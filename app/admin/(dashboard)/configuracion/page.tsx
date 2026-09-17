@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Save, Loader2, ToggleLeft, ToggleRight, CreditCard, Smartphone } from 'lucide-react'
+import { Save, Loader2, ToggleLeft, ToggleRight, CreditCard, Smartphone, Mail, MessageCircle } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import type { StoreConfig } from '@/lib/types'
 
@@ -13,6 +13,7 @@ export default function ConfiguracionPage() {
     pickup_end_time: '',
     pickup_address: '',
     pickup_instructions: '',
+    pickup_contact_phone: '',
     delivery_enabled: false,
     delivery_fee: 0,
     announcement: '',
@@ -21,6 +22,9 @@ export default function ConfiguracionPage() {
     zelle_enabled: false,
     zelle_name: '',
     zelle_recipient: '',
+    admin_notify_new_order: true,
+    admin_notification_email: '',
+    support_whatsapp_number: '',
   })
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -168,6 +172,22 @@ export default function ConfiguracionPage() {
                 placeholder="123 Calle Principal, Ciudad"
                 className="w-full bg-bocado-darker border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-bocado-orange/50 transition-colors"
               />
+            </div>
+
+            <div>
+              <label className="text-gray-400 text-sm font-medium block mb-2">
+                Número para coordinar el retiro
+              </label>
+              <input
+                type="tel"
+                value={config.pickup_contact_phone ?? ''}
+                onChange={(e) => update('pickup_contact_phone', e.target.value)}
+                placeholder="+1 (555) 000-0000"
+                className="w-full bg-bocado-darker border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-bocado-orange/50 transition-colors"
+              />
+              <p className="text-gray-600 text-xs mt-2">
+                Aparece en el correo de &quot;Listo para recoger&quot; para que el cliente coordine contigo.
+              </p>
             </div>
 
             <div>
@@ -367,6 +387,87 @@ export default function ConfiguracionPage() {
                 className="w-full bg-bocado-darker border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-bocado-orange/50 transition-colors"
               />
             </div>
+          </div>
+        </div>
+
+        {/* Soporte por WhatsApp */}
+        <div className="bg-bocado-dark border border-white/5 rounded-2xl p-6">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-9 h-9 bg-green-500/10 rounded-xl flex items-center justify-center">
+              <MessageCircle size={18} className="text-green-500" />
+            </div>
+            <div>
+              <h2 className="text-white font-bold text-lg">Soporte por WhatsApp</h2>
+              <p className="text-gray-500 text-sm">
+                Botón de WhatsApp visible en toda la tienda para que los clientes te escriban
+              </p>
+            </div>
+          </div>
+          <label className="text-gray-400 text-sm font-medium block mb-2">
+            Número de WhatsApp
+          </label>
+          <input
+            type="tel"
+            value={config.support_whatsapp_number ?? ''}
+            onChange={(e) => update('support_whatsapp_number', e.target.value)}
+            placeholder="+1 (555) 000-0000"
+            className="w-full bg-bocado-darker border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-bocado-orange/50 transition-colors"
+          />
+          <p className="text-gray-600 text-xs mt-2">
+            Incluye el código de país. Si lo dejas vacío, el botón de soporte no aparece.
+          </p>
+        </div>
+
+        {/* Notifications */}
+        <div className="bg-bocado-dark border border-white/5 rounded-2xl p-6">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 bg-bocado-orange/10 rounded-xl flex items-center justify-center">
+                <Mail size={18} className="text-bocado-orange" />
+              </div>
+              <div>
+                <h2 className="text-white font-bold text-lg">Notificaciones</h2>
+                <p className="text-gray-500 text-sm">
+                  Correo al encargado cuando llega un pedido nuevo
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={() => update('admin_notify_new_order', !config.admin_notify_new_order)}
+              className="flex items-center gap-2"
+            >
+              {config.admin_notify_new_order ? (
+                <ToggleRight size={36} className="text-bocado-orange" />
+              ) : (
+                <ToggleLeft size={36} className="text-gray-600" />
+              )}
+              <span
+                className={`text-sm font-bold ${
+                  config.admin_notify_new_order ? 'text-bocado-orange' : 'text-gray-500'
+                }`}
+              >
+                {config.admin_notify_new_order ? 'Activo' : 'Inactivo'}
+              </span>
+            </button>
+          </div>
+          <div
+            className={`transition-opacity ${
+              config.admin_notify_new_order ? 'opacity-100' : 'opacity-40 pointer-events-none'
+            }`}
+          >
+            <label className="text-gray-400 text-sm font-medium block mb-2">
+              Correo del encargado
+            </label>
+            <input
+              type="email"
+              value={config.admin_notification_email ?? ''}
+              onChange={(e) => update('admin_notification_email', e.target.value)}
+              placeholder="tucorreo@ejemplo.com"
+              className="w-full bg-bocado-darker border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-bocado-orange/50 transition-colors"
+            />
+            <p className="text-gray-600 text-xs mt-2">
+              Llegará un correo cada vez que un cliente haga un pedido nuevo (estado &quot;Pedido recibido&quot;).
+            </p>
           </div>
         </div>
 

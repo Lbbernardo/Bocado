@@ -13,7 +13,7 @@ const orderItemSchema = z.object({
 const createOrderSchema = z.object({
   customer_name: z.string().min(2),
   customer_phone: z.string().min(7),
-  customer_email: z.string().email().optional().or(z.literal('')),
+  customer_email: z.string().email('Email inválido').min(1, 'Email requerido'),
   delivery_method: z.enum(['pickup', 'delivery']),
   delivery_address: z.string().optional(),
   pickup_date: z.string().nullable().optional(),
@@ -43,15 +43,12 @@ export async function POST(request: NextRequest) {
       0
     )
 
-    // Get delivery fee from config
-    let deliveryFee = 0
-    if (data.delivery_method === 'delivery') {
-      const { data: config } = await supabase
-        .from('store_config')
-        .select('delivery_fee')
-        .single()
-      deliveryFee = config?.delivery_fee ?? 0
-    }
+    const { data: config } = await supabase
+      .from('store_config')
+      .select('delivery_fee, admin_notify_new_order, admin_notification_email')
+      .single()
+
+    const deliveryFee = data.delivery_method === 'delivery' ? (config?.delivery_fee ?? 0) : 0
 
     const total = subtotal + deliveryFee
     const orderNumber = generateOrderNumber()
@@ -106,9 +103,15 @@ export async function POST(request: NextRequest) {
       changed_by: 'customer',
     })
 
-    // Send confirmation email (non-blocking)
+    // Send confirmation email to customer — awaited so it isn't killed when the
+    // serverless function freezes right after the response is returned.
     if (data.customer_email) {
-      sendConfirmationEmail(order, data.items).catch(console.error)
+      await sendConfirmationEmail(order, data.items).catch(console.error)
+    }
+
+    // Notify the site admin of the new order
+    if (config?.admin_notify_new_order && config?.admin_notification_email) {
+      await sendAdminNewOrderEmail(config.admin_notification_email, order, data.items).catch(console.error)
     }
 
     return NextResponse.json(
@@ -119,6 +122,61 @@ export async function POST(request: NextRequest) {
     console.error('Order error:', err)
     return NextResponse.json({ error: 'Error interno del servidor' }, { status: 500 })
   }
+}
+
+async function sendAdminNewOrderEmail(
+  adminEmail: string,
+  order: {
+    order_number: string
+    customer_name: string
+    customer_phone: string
+    total: number
+    delivery_method: string
+    delivery_address: string | null
+    customer_note: string | null
+  },
+  items: { product_name: string; quantity: number; unit_price: number }[]
+) {
+  const { Resend } = await import('resend')
+  const resend = new Resend(process.env.RESEND_API_KEY)
+
+  const itemsList = items
+    .map((i) => `${i.product_name} ×${i.quantity} — $${(i.unit_price * i.quantity).toFixed(2)}`)
+    .join('<br>')
+
+  await resend.emails.send({
+    from: `${process.env.RESEND_FROM_NAME ?? 'BOCADO'} <${process.env.RESEND_FROM_EMAIL ?? 'pedidos@bocado.com'}>`,
+    to: adminEmail,
+    subject: `🔔 Nuevo pedido recibido — ${order.order_number}`,
+    html: `
+      <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; background: #111; color: #fff; border-radius: 16px; overflow: hidden;">
+        <div style="background: #FFA600; padding: 32px; text-align: center;">
+          <h1 style="margin: 0; font-size: 36px; font-weight: 900; color: white; letter-spacing: -1px;">BOCADO</h1>
+          <p style="margin: 4px 0 0; color: rgba(255,255,255,0.8); font-size: 12px; letter-spacing: 3px; text-transform: uppercase;">· NUEVO PEDIDO ·</p>
+        </div>
+        <div style="padding: 32px;">
+          <div style="background: #1a1a1a; border-radius: 12px; padding: 20px; margin-bottom: 24px; border: 1px solid #222;">
+            <p style="color: #888; margin: 0 0 4px; font-size: 12px;">NÚMERO DE PEDIDO</p>
+            <p style="color: #FFA600; font-size: 28px; font-weight: 900; margin: 0;">${order.order_number}</p>
+          </div>
+          <p style="color: #888; margin: 0 0 8px;"><strong style="color: white;">Cliente:</strong> ${order.customer_name}</p>
+          <p style="color: #888; margin: 0 0 8px;"><strong style="color: white;">Teléfono:</strong> ${order.customer_phone}</p>
+          <p style="color: #888; margin: 0 0 8px; text-transform: capitalize;"><strong style="color: white;">Entrega:</strong> ${order.delivery_method}${order.delivery_address ? ` — ${order.delivery_address}` : ''}</p>
+          ${order.customer_note ? `<p style="color: #888; margin: 0 0 8px;"><strong style="color: white;">Nota:</strong> ${order.customer_note}</p>` : ''}
+          <p style="color: #666; font-size: 14px; margin: 20px 0 4px;">Productos:</p>
+          <p style="color: #aaa; font-size: 14px; line-height: 1.6;">${itemsList}</p>
+          <div style="border-top: 1px solid #222; margin-top: 20px; padding-top: 16px; display: flex; justify-content: space-between;">
+            <span style="color: white; font-weight: 900;">Total</span>
+            <span style="color: #FFA600; font-weight: 900; font-size: 20px;">$${order.total.toFixed(2)}</span>
+          </div>
+          <hr style="border: none; border-top: 1px solid #222; margin: 24px 0;" />
+          <p style="color: #666; font-size: 13px; text-align: center; margin: 0;">
+            Si el cliente pagó por Zelle, verifica y confírmalo desde el panel de admin.
+          </p>
+        </div>
+      </div>
+    `,
+  })
 }
 
 async function sendConfirmationEmail(

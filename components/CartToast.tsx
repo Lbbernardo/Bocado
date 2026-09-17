@@ -36,7 +36,7 @@ export default function CartToast() {
       zIndex: 200,
       display: 'flex', alignItems: 'center', gap: '12px',
       backgroundColor: '#2E2A24',
-      borderRadius: '999px',
+      borderRadius: '10px',
       padding: '10px 16px 10px 10px',
       boxShadow: '0 12px 40px rgba(0,0,0,.35)',
       minWidth: '280px', maxWidth: '360px',
@@ -69,7 +69,7 @@ export default function CartToast() {
       <Link href="/carrito" onClick={() => setVisible(false)} style={{
         backgroundColor: '#FF9E00', color: 'white',
         fontWeight: 700, fontSize: '0.8rem',
-        padding: '8px 16px', borderRadius: '999px',
+        padding: '8px 16px', borderRadius: '6px',
         textDecoration: 'none', whiteSpace: 'nowrap',
         display: 'flex', alignItems: 'center', gap: '6px',
         flexShrink: 0,

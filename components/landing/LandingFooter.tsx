@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 
@@ -23,8 +24,19 @@ const LINKS = [
 
 export default function LandingFooter() {
   const year = new Date().getFullYear()
+  const [whatsapp, setWhatsapp] = useState<string | null>(null)
+
+  useEffect(() => {
+    fetch('/api/config')
+      .then((r) => r.json())
+      .then((data) => setWhatsapp(data?.support_whatsapp_number ?? null))
+      .catch(() => {})
+  }, [])
   return (
-    <footer style={{ backgroundColor: '#2E2A24', padding: '64px 26px 0' }}>
+    <footer style={{ backgroundColor: '#2E2A24', padding: '64px 26px 0', position: 'relative' }}>
+      <svg viewBox="0 0 1440 60" style={{ width: '100%', display: 'block', position: 'absolute', top: '-58px', left: 0 }}>
+        <path fill="#2E2A24" d="M0,40 Q360,0 720,32 Q1080,56 1440,16 L1440,60 L0,60 Z" />
+      </svg>
       <div style={{ maxWidth: '1180px', margin: '0 auto' }}>
 
         {/* Top grid */}
@@ -39,11 +51,16 @@ export default function LandingFooter() {
             {/* Social */}
             <div style={{ display: 'flex', gap: '10px' }}>
               {[
-                { label: 'IG', icon: '📷' },
-                { label: 'TK', icon: '🎵' },
-                { label: 'WA', icon: '💬' },
-              ].map(({ label, icon }) => (
-                <a key={label} href="#" style={{
+                { label: 'IG', icon: '📷', href: '#' },
+                { label: 'TK', icon: '🎵', href: '#' },
+                {
+                  label: 'WA', icon: '💬',
+                  href: whatsapp
+                    ? `https://wa.me/${whatsapp.replace(/[^\d]/g, '')}?text=${encodeURIComponent('¡Hola! Tengo una pregunta sobre BOCADO 🧀')}`
+                    : '#',
+                },
+              ].map(({ label, icon, href }) => (
+                <a key={label} href={href} target={href !== '#' ? '_blank' : undefined} rel={href !== '#' ? 'noopener noreferrer' : undefined} style={{
                   width: '40px', height: '40px',
                   borderRadius: '50%',
                   border: '1px solid rgba(255,255,255,.2)',

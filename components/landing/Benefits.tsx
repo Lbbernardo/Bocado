@@ -1,6 +1,7 @@
 'use client'
 
 import { Heart, Snowflake, Leaf } from 'lucide-react'
+import Reveal from './Reveal'
 
 const ITEMS = [
   { icon: <Heart size={24} color="#FF9E00" />, title: 'Auténticamente venezolanos', desc: 'La receta de siempre, esa que sabe a casa.' },
@@ -19,29 +20,31 @@ export default function Benefits() {
           gap: '20px',
           marginTop: '-46px',
         }} className="benefits-grid">
-          {ITEMS.map(({ icon, title, desc }) => (
-            <div key={title} style={{
-              backgroundColor: 'white',
-              borderRadius: '26px',
-              padding: '28px 24px',
-              boxShadow: '0 18px 50px -24px rgba(70,50,20,.2)',
-              transition: 'transform .3s',
-            }}
-              onMouseEnter={e => (e.currentTarget.style.transform = 'translateY(-6px)')}
-              onMouseLeave={e => (e.currentTarget.style.transform = 'translateY(0)')}
-            >
+          {ITEMS.map(({ icon, title, desc }, i) => (
+            <Reveal key={title} delay={i * 100}>
               <div style={{
-                width: '54px', height: '54px',
-                backgroundColor: '#FBF5E9',
-                borderRadius: '14px',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                marginBottom: '16px',
-              }}>
-                {icon}
+                backgroundColor: 'white',
+                borderRadius: 'var(--radius)',
+                padding: '28px 24px',
+                boxShadow: '0 18px 50px -24px rgba(70,50,20,.2)',
+                transition: 'transform .3s',
+              }}
+                onMouseEnter={e => (e.currentTarget.style.transform = 'translateY(-6px)')}
+                onMouseLeave={e => (e.currentTarget.style.transform = 'translateY(0)')}
+              >
+                <div style={{
+                  width: '54px', height: '54px',
+                  backgroundColor: '#FBF5E9',
+                  borderRadius: '14px',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  marginBottom: '16px',
+                }}>
+                  {icon}
+                </div>
+                <p style={{ fontWeight: 700, color: '#2E2A24', fontSize: '0.95rem', marginBottom: '6px' }}>{title}</p>
+                <p style={{ color: '#6B6358', fontSize: '0.85rem', lineHeight: 1.55 }}>{desc}</p>
               </div>
-              <p style={{ fontWeight: 700, color: '#2E2A24', fontSize: '0.95rem', marginBottom: '6px' }}>{title}</p>
-              <p style={{ color: '#6B6358', fontSize: '0.85rem', lineHeight: 1.55 }}>{desc}</p>
-            </div>
+            </Reveal>
           ))}
         </div>
       </div>

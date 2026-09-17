@@ -33,7 +33,7 @@ function ProductCard({ product }: { product: Product }) {
     <Link href={`/productos/${product.id}`} style={{ textDecoration: 'none', display: 'block' }} className="product-card-link">
       <div style={{
         backgroundColor: 'white',
-        borderRadius: '20px',
+        borderRadius: 'var(--radius)',
         overflow: 'hidden',
         border: '1.5px solid #F0EDE8',
         transition: 'box-shadow .25s, border-color .25s',
@@ -55,7 +55,7 @@ function ProductCard({ product }: { product: Product }) {
           )}
 
           {isOutOfStock && (
-            <div style={{ position: 'absolute', top: '10px', left: '10px', backgroundColor: '#2E2A24', color: 'white', fontSize: '11px', fontWeight: 700, padding: '4px 12px', borderRadius: '999px' }}>
+            <div style={{ position: 'absolute', top: '10px', left: '10px', backgroundColor: '#2E2A24', color: 'white', fontSize: '11px', fontWeight: 700, padding: '4px 12px', borderRadius: '4px 10px 4px 10px' }}>
               Agotado
             </div>
           )}
@@ -85,7 +85,7 @@ function ProductCard({ product }: { product: Product }) {
 
         {/* Info */}
         <div style={{ padding: '14px 16px' }}>
-          <p style={{ fontWeight: 700, color: '#2E2A24', fontSize: '0.9rem', marginBottom: '4px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          <p style={{ fontFamily: 'var(--font-fraunces), Georgia, serif', fontWeight: 700, color: '#2E2A24', fontSize: '0.95rem', marginBottom: '4px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
             {product.name}
           </p>
           <p style={{ fontWeight: 800, color: '#FF9E00', fontSize: '1rem' }}>
@@ -177,22 +177,28 @@ export default function ProductsClient({ products, categories }: Props) {
         </div>
       )}
 
-      <div style={{ display: 'flex', gap: '40px' }}>
+      <div className="productos-layout">
         {/* Desktop sidebar */}
-        <aside style={{ width: '160px', flexShrink: 0 }} className="desktop-sidebar">
+        <aside className="productos-sidebar">
           <Sidebar />
         </aside>
 
         {/* Grid */}
-        <div style={{ flex: 1 }}>
-          <p style={{ fontSize: '0.85rem', color: '#6B6358', marginBottom: '20px' }} className="desktop-count">{filtered.length} productos</p>
+        <div style={{ minWidth: 0, flex: 1, width: '100%', maxWidth: '100%' }}>
+          <p style={{ fontSize: '0.85rem', color: '#6B6358', marginBottom: '16px' }} className="desktop-count">
+            {filtered.length} productos
+          </p>
 
           {filtered.length > 0 ? (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }} className="products-grid">
-              {filtered.map((p) => <ProductCard key={p.id} product={p} />)}
+            <div className="products-grid">
+              {filtered.map((p, i) => (
+                <div key={p.id} className="anim-up" style={{ animationDelay: `${Math.min(i, 8) * 0.06}s` }}>
+                  <ProductCard product={p} />
+                </div>
+              ))}
             </div>
           ) : (
-            <div style={{ textAlign: 'center', padding: '80px 0' }}>
+            <div style={{ textAlign: 'center', padding: '60px 0' }}>
               <p style={{ fontSize: '48px', marginBottom: '16px' }}>🧀</p>
               <p style={{ color: '#6B6358' }}>No hay productos con estos filtros</p>
               <button onClick={() => { setSelectedCategory('all'); setAvailability('all') }} style={{
@@ -207,21 +213,9 @@ export default function ProductsClient({ products, categories }: Props) {
       </div>
 
       <style>{`
-        .product-card:hover { box-shadow: 0 12px 40px rgba(0,0,0,.1); border-color: rgba(255,158,0,.3); }
+        .product-card:hover { box-shadow: 0 12px 40px rgba(0,0,0,.1) !important; border-color: rgba(255,158,0,.3) !important; }
         .product-card:hover .product-card-img { transform: scale(1.05); }
         .product-card:hover .quick-add-btn { opacity: 1 !important; }
-        .desktop-sidebar { display: block; }
-        .desktop-count { display: block; }
-        .mobile-filter-bar { display: none; }
-        .products-grid { grid-template-columns: repeat(3, 1fr) !important; }
-        @media (max-width: 1024px) { .products-grid { grid-template-columns: repeat(2, 1fr) !important; } }
-        @media (max-width: 768px) {
-          .desktop-sidebar { display: none; }
-          .desktop-count { display: none; }
-          .mobile-filter-bar { display: flex; }
-          .quick-add-btn { opacity: 1 !important; }
-        }
-        @media (max-width: 480px) { .products-grid { grid-template-columns: repeat(2, 1fr) !important; } }
       `}</style>
     </div>
   )

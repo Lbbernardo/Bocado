@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, Loader2, Phone, Mail, MapPin, MessageSquare } from 'lucide-react'
+import { ArrowLeft, Loader2, Phone, Mail, MapPin, MessageSquare, Smartphone } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import {
   ORDER_STATUS_CONFIG,
@@ -226,6 +226,19 @@ export default function PedidoDetailPage() {
 
         {/* Right: actions */}
         <div className="space-y-4">
+          {/* Zelle pending verification alert */}
+          {order.order_status === 'received' && order.payment_status === 'zelle_claimed' && (
+            <div className="rounded-2xl p-5 border bg-purple-500/10 border-purple-500/30">
+              <p className="text-sm font-semibold mb-1 text-purple-300 flex items-center gap-2">
+                <Smartphone size={15} />
+                Zelle reportado por el cliente
+              </p>
+              <p className="text-gray-400 text-xs">
+                El cliente indicó que ya envió el pago por Zelle. Verifica en tu cuenta y confirma el pedido.
+              </p>
+            </div>
+          )}
+
           {/* Status card */}
           <div
             className="rounded-2xl p-5 border"
@@ -307,7 +320,13 @@ export default function PedidoDetailPage() {
             </div>
             <div className="flex justify-between">
               <span>Estado de pago</span>
-              <span className="text-gray-300">{order.payment_status}</span>
+              <span className="text-gray-300">
+                {order.payment_status === 'zelle_claimed'
+                  ? 'Zelle enviado (sin verificar)'
+                  : order.payment_status === 'paid'
+                  ? 'Pagado'
+                  : 'Pendiente'}
+              </span>
             </div>
           </div>
         </div>

@@ -2,7 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { ORDER_STATUS_CONFIG } from '@/lib/types'
 import { formatCurrency, formatDate } from '@/lib/utils'
 import Link from 'next/link'
-import { Package, ChevronRight, RefreshCw } from 'lucide-react'
+import { Package, ChevronRight, RefreshCw, Smartphone } from 'lucide-react'
 
 export const revalidate = 0
 
@@ -10,11 +10,8 @@ const STATUS_FILTERS = [
   { key: 'all', label: 'Todos' },
   { key: 'received', label: 'Nuevos' },
   { key: 'confirmed', label: 'Confirmados' },
-  { key: 'payment_pending', label: 'Pago pendiente' },
-  { key: 'payment_received', label: 'Pago recibido' },
-  { key: 'in_preparation', label: 'Preparación' },
   { key: 'ready_for_pickup', label: 'Listos' },
-  { key: 'delivered', label: 'Entregados' },
+  { key: 'completed', label: 'Completados' },
   { key: 'cancelled', label: 'Cancelados' },
 ] as const
 
@@ -170,15 +167,22 @@ export default async function PedidosAdminPage({ searchParams }: Props) {
                   <span className="font-black text-white">
                     {formatCurrency(order.total)}
                   </span>
-                  <span
-                    className="text-xs font-bold px-3 py-1 rounded-full"
-                    style={{
-                      backgroundColor: statusCfg?.color + '20',
-                      color: statusCfg?.color,
-                    }}
-                  >
-                    {statusCfg?.label}
-                  </span>
+                  {order.order_status === 'received' && order.payment_status === 'zelle_claimed' ? (
+                    <span className="flex items-center gap-1.5 text-xs font-bold px-3 py-1 rounded-full bg-purple-500/20 text-purple-300">
+                      <Smartphone size={11} />
+                      Verificar Zelle
+                    </span>
+                  ) : (
+                    <span
+                      className="text-xs font-bold px-3 py-1 rounded-full"
+                      style={{
+                        backgroundColor: statusCfg?.color + '20',
+                        color: statusCfg?.color,
+                      }}
+                    >
+                      {statusCfg?.label}
+                    </span>
+                  )}
                 </div>
 
                 <ChevronRight

@@ -5,11 +5,8 @@ import { ORDER_STATUS_CONFIG } from '@/lib/types'
 const TIMELINE_STEPS: { status: OrderStatus; label: string }[] = [
   { status: 'received', label: 'Pedido recibido' },
   { status: 'confirmed', label: 'Confirmado' },
-  { status: 'payment_pending', label: 'Pago pendiente' },
-  { status: 'payment_received', label: 'Pago recibido' },
-  { status: 'in_preparation', label: 'En preparación' },
-  { status: 'ready_for_pickup', label: 'Listo' },
-  { status: 'delivered', label: 'Entregado' },
+  { status: 'ready_for_pickup', label: 'Listo para recoger' },
+  { status: 'completed', label: 'Completado' },
 ]
 
 interface OrderTimelineProps {
@@ -19,13 +16,13 @@ interface OrderTimelineProps {
 export default function OrderTimeline({ currentStatus }: OrderTimelineProps) {
   if (currentStatus === 'cancelled') {
     return (
-      <div className="flex items-center gap-3 bg-red-50 border border-red-200 rounded-2xl p-4">
-        <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
-          <span className="text-lg">✕</span>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', backgroundColor: '#FEF2F2', border: '1px solid #FCA5A5', borderRadius: '16px', padding: '16px' }}>
+        <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: '#FEE2E2', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <span style={{ fontSize: '18px' }}>✕</span>
         </div>
         <div>
-          <p className="font-bold text-red-700">Pedido cancelado</p>
-          <p className="text-red-500 text-sm">
+          <p style={{ fontWeight: 700, color: '#B91C1C' }}>Pedido cancelado</p>
+          <p style={{ color: '#EF4444', fontSize: '0.85rem' }}>
             {ORDER_STATUS_CONFIG.cancelled.message}
           </p>
         </div>
@@ -38,63 +35,48 @@ export default function OrderTimeline({ currentStatus }: OrderTimelineProps) {
   )
 
   return (
-    <div className="space-y-1">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
       {TIMELINE_STEPS.map((step, idx) => {
         const isDone = idx < currentIndex
         const isCurrent = idx === currentIndex
-        const isPending = idx > currentIndex
         const config = ORDER_STATUS_CONFIG[step.status]
 
         return (
-          <div key={step.status} className="flex items-start gap-4">
+          <div key={step.status} style={{ display: 'flex', alignItems: 'flex-start', gap: '16px' }}>
             {/* Icon */}
-            <div className="flex flex-col items-center flex-shrink-0">
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0 }}>
               <div
-                className={`w-9 h-9 rounded-full flex items-center justify-center border-2 transition-all ${
-                  isDone
-                    ? 'bg-green-500 border-green-500'
-                    : isCurrent
-                    ? 'border-bocado-orange'
-                    : 'bg-transparent border-gray-200'
-                }`}
-                style={
-                  isCurrent
-                    ? { backgroundColor: config.bg, borderColor: config.color }
-                    : {}
-                }
+                style={{
+                  width: '36px', height: '36px', borderRadius: '50%',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  border: `2px solid ${isDone ? '#22C55E' : isCurrent ? config.color : '#F0EDE8'}`,
+                  backgroundColor: isDone ? '#22C55E' : isCurrent ? config.bg : 'transparent',
+                  transition: 'all .2s',
+                }}
               >
                 {isDone ? (
-                  <Check size={16} className="text-white" strokeWidth={3} />
+                  <Check size={16} color="white" strokeWidth={3} />
                 ) : isCurrent ? (
-                  <Clock size={14} style={{ color: config.color }} />
+                  <Clock size={14} color={config.color} />
                 ) : (
-                  <div className="w-2 h-2 rounded-full bg-gray-200" />
+                  <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#F0EDE8' }} />
                 )}
               </div>
               {idx < TIMELINE_STEPS.length - 1 && (
-                <div
-                  className={`w-0.5 h-6 mt-1 ${
-                    isDone ? 'bg-green-300' : 'bg-gray-100'
-                  }`}
-                />
+                <div style={{ width: '2px', height: '24px', marginTop: '4px', backgroundColor: isDone ? '#86EFAC' : '#F0EDE8' }} />
               )}
             </div>
 
             {/* Label */}
-            <div className="pt-1.5">
-              <p
-                className={`text-sm font-semibold ${
-                  isDone
-                    ? 'text-green-600'
-                    : isCurrent
-                    ? 'text-bocado-dark'
-                    : 'text-gray-300'
-                }`}
-              >
+            <div style={{ paddingTop: '6px' }}>
+              <p style={{
+                fontSize: '0.9rem', fontWeight: 600,
+                color: isDone ? '#16A34A' : isCurrent ? '#2E2A24' : '#D1C9BE',
+              }}>
                 {step.label}
               </p>
               {isCurrent && (
-                <p className="text-xs text-gray-500 mt-0.5">
+                <p style={{ color: '#6B6358', fontSize: '0.78rem', marginTop: '2px' }}>
                   {config.message}
                 </p>
               )}

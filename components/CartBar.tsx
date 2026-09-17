@@ -27,7 +27,7 @@ export default function CartBar() {
       <Link href="/carrito" style={{ textDecoration: 'none' }}>
         <div style={{
           backgroundColor: '#2E2A24',
-          borderRadius: '999px',
+          borderRadius: '12px',
           padding: '14px 20px',
           display: 'flex',
           alignItems: 'center',
@@ -66,7 +66,7 @@ export default function CartBar() {
             fontWeight: 800,
             fontSize: '0.95rem',
             padding: '8px 18px',
-            borderRadius: '999px',
+            borderRadius: '6px',
             display: 'flex', alignItems: 'center', gap: '6px',
             flexShrink: 0,
           }}>

@@ -29,8 +29,8 @@ const config: Config = {
         },
       },
       fontFamily: {
-        display: ['var(--font-display)', '"Baloo 2"', 'system-ui', 'sans-serif'],
-        poppins: ['var(--font-poppins)', 'sans-serif'],
+        body: ['var(--font-body)', 'sans-serif'],
+        fraunces: ['var(--font-fraunces)', 'Georgia', 'serif'],
       },
       maxWidth: { content: '1180px' },
       animation: {

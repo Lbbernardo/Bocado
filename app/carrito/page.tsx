@@ -6,7 +6,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import {
   Trash2, Plus, Minus, ShoppingBag, ArrowLeft,
-  User, Phone, MapPin, CreditCard, Smartphone,
+  User, Phone, Mail, MapPin, CreditCard, Smartphone,
   CheckCircle2, Copy, Loader2, Clock,
 } from 'lucide-react'
 import Navbar from '@/components/Navbar'
@@ -46,6 +46,7 @@ export default function CarritoPage() {
   const [config, setConfig] = useState<StoreConfig | null>(null)
   const [step, setStep] = useState<'cart' | 'zelle'>('cart')
   const [orderNumber, setOrderNumber] = useState('')
+  const [orderTotal, setOrderTotal] = useState(0)
   const [zelleLoading, setZelleLoading] = useState(false)
   const [zelleCopied, setZelleCopied] = useState(false)
   const [submitting, setSubmitting] = useState(false)
@@ -54,19 +55,17 @@ export default function CarritoPage() {
   // Form state — plain useState, no library
   const [name, setName] = useState('')
   const [phone, setPhone] = useState('')
-  const [deliveryMethod, setDeliveryMethod] = useState<'pickup' | 'delivery'>('pickup')
-  const [address, setAddress] = useState('')
+  const [email, setEmail] = useState('')
   const [note, setNote] = useState('')
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
 
-  const deliveryFee = deliveryMethod === 'delivery' ? (config?.delivery_fee ?? 0) : 0
-  const total = subtotal + deliveryFee
+  const total = subtotal
 
   function validate() {
     const errs: Record<string, string> = {}
     if (name.trim().length < 2) errs.name = 'Nombre requerido (mínimo 2 caracteres)'
     if (phone.trim().length < 7) errs.phone = 'Teléfono requerido'
-    if (deliveryMethod === 'delivery' && address.trim().length < 5) errs.address = 'Dirección requerida para delivery'
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) errs.email = 'Email inválido'
     setFieldErrors(errs)
     return Object.keys(errs).length === 0
   }
@@ -96,12 +95,9 @@ export default function CarritoPage() {
         <Navbar />
         <div style={{ minHeight: '100vh', backgroundColor: 'white', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '16px', paddingTop: '80px' }}>
           <span style={{ fontSize: '80px', marginBottom: '20px' }}>🛒</span>
-          <h1 style={{ fontSize: '1.8rem', fontWeight: 900, color: '#2E2A24', marginBottom: '8px' }}>Tu carrito está vacío</h1>
+          <h1 style={{ fontFamily: 'var(--font-fraunces), Georgia, serif', fontSize: '1.8rem', fontWeight: 900, color: '#2E2A24', marginBottom: '8px' }}>Tu carrito está vacío</h1>
           <p style={{ color: '#6B6358', marginBottom: '28px' }}>Agrega tus tequeños favoritos para continuar</p>
-          <Link href="/productos" style={{
-            backgroundColor: '#FF9E00', color: 'white', fontWeight: 700,
-            padding: '14px 32px', borderRadius: '999px', textDecoration: 'none',
-          }}>
+          <Link href="/productos" className="btn-pill primary" style={{ padding: '14px 32px' }}>
             Ver productos
           </Link>
         </div>
@@ -121,7 +117,7 @@ export default function CarritoPage() {
                 <div style={{ width: '60px', height: '60px', backgroundColor: '#F5F3FF', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
                   <Smartphone size={28} color="#7C3AED" />
                 </div>
-                <h2 style={{ fontWeight: 900, color: '#2E2A24', fontSize: '1.4rem', marginBottom: '6px' }}>Paga por Zelle</h2>
+                <h2 style={{ fontFamily: 'var(--font-fraunces), Georgia, serif', fontWeight: 900, color: '#2E2A24', fontSize: '1.4rem', marginBottom: '6px' }}>Paga por Zelle</h2>
                 <p style={{ color: '#6B6358', fontSize: '0.875rem' }}>
                   Pedido <strong style={{ color: '#FF9E00' }}>{orderNumber}</strong>
                 </p>
@@ -147,7 +143,7 @@ export default function CarritoPage() {
                   </div>
                 )}
                 <p style={{ fontSize: '0.82rem', color: '#7C3AED', fontWeight: 600 }}>
-                  Envía exactamente <strong>{formatCurrency(total)}</strong> e incluye el número <strong>{orderNumber}</strong> en la nota.
+                  Envía exactamente <strong>{formatCurrency(orderTotal)}</strong> e incluye el número <strong>{orderNumber}</strong> en la nota.
                 </p>
               </div>
 
@@ -200,8 +196,8 @@ export default function CarritoPage() {
         body: JSON.stringify({
           customer_name: name.trim(),
           customer_phone: phone.trim(),
-          delivery_method: deliveryMethod,
-          delivery_address: address.trim() || undefined,
+          customer_email: email.trim(),
+          delivery_method: 'pickup',
           customer_note: note.trim() || undefined,
           items: items.map(i => ({
             product_id: i.product.id,
@@ -217,6 +213,7 @@ export default function CarritoPage() {
       if (!res.ok) throw new Error(result.error || 'Error al crear el pedido')
 
       setOrderNumber(result.order_number)
+      setOrderTotal(total)
 
       if (method === 'stripe') {
         const sr = await fetch('/api/stripe/create-session', {
@@ -252,7 +249,7 @@ export default function CarritoPage() {
               <ArrowLeft size={18} />
             </Link>
             <div>
-              <h1 style={{ fontSize: '1.6rem', fontWeight: 900, color: '#2E2A24', lineHeight: 1 }}>Tu pedido</h1>
+              <h1 style={{ fontFamily: 'var(--font-fraunces), Georgia, serif', fontSize: '1.6rem', fontWeight: 900, color: '#2E2A24', lineHeight: 1 }}>Tu pedido</h1>
               <p style={{ color: '#6B6358', fontSize: '0.85rem', marginTop: '3px' }}>{itemCount} {itemCount === 1 ? 'producto' : 'productos'}</p>
             </div>
           </div>
@@ -321,55 +318,31 @@ export default function CarritoPage() {
                         style={inputStyle(fieldErrors.phone)}
                       />
                     </Field>
+                    <Field label="Email *" error={fieldErrors.email} icon={<Mail size={12} />}>
+                      <input
+                        value={email}
+                        onChange={e => { setEmail(e.target.value); setFieldErrors(p => ({ ...p, email: '' })) }}
+                        placeholder="maria@ejemplo.com"
+                        type="email"
+                        style={inputStyle(fieldErrors.email)}
+                      />
+                    </Field>
                   </div>
                 </div>
 
-                {/* Delivery method */}
+                {/* Pickup info */}
                 <div style={{ backgroundColor: 'white', borderRadius: '20px', padding: '20px', boxShadow: '0 2px 12px rgba(0,0,0,.05)' }}>
                   <p style={{ fontWeight: 800, color: '#2E2A24', marginBottom: '16px', fontSize: '0.95rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <MapPin size={16} color="#FF9E00" /> Entrega
+                    <MapPin size={16} color="#FF9E00" /> Pickup
                   </p>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '14px' }}>
-                    {[
-                      { val: 'pickup', emoji: '📍', label: 'Pickup', sub: config?.pickup_enabled ? 'Disponible' : 'No disponible', disabled: !config?.pickup_enabled },
-                      { val: 'delivery', emoji: '🛵', label: 'Delivery', sub: config?.delivery_enabled ? `+${formatCurrency(config.delivery_fee ?? 0)}` : 'No disponible', disabled: !config?.delivery_enabled },
-                    ].map(({ val, emoji, label, sub, disabled }) => (
-                      <label key={val} style={{
-                        cursor: disabled ? 'not-allowed' : 'pointer',
-                        opacity: disabled ? 0.45 : 1,
-                        border: `2px solid ${deliveryMethod === val ? '#FF9E00' : '#F0EDE8'}`,
-                        backgroundColor: deliveryMethod === val ? '#FFF8EE' : 'white',
-                        borderRadius: '14px', padding: '14px', transition: 'all .2s',
-                      }}>
-                        <input type="radio" value={val} disabled={disabled} checked={deliveryMethod === val} onChange={() => setDeliveryMethod(val as 'pickup' | 'delivery')} style={{ display: 'none' }} />
-                        <div style={{ fontSize: '20px', marginBottom: '6px' }}>{emoji}</div>
-                        <p style={{ fontWeight: 700, color: '#2E2A24', fontSize: '0.88rem' }}>{label}</p>
-                        <p style={{ color: deliveryMethod === val ? '#FF9E00' : '#6B6358', fontSize: '0.78rem', marginTop: '2px' }}>{sub}</p>
-                      </label>
-                    ))}
+                  <div style={{ backgroundColor: '#FFF8EE', borderRadius: '12px', padding: '14px', border: '1px solid rgba(255,158,0,.2)' }}>
+                    <p style={{ fontWeight: 700, color: '#2E2A24', fontSize: '0.85rem', marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <Clock size={13} color="#FF9E00" /> Info del pickup
+                    </p>
+                    {config?.pickup_date && <p style={{ fontSize: '0.82rem', color: '#6B6358' }}>📅 {config.pickup_date}</p>}
+                    {config?.pickup_start_time && <p style={{ fontSize: '0.82rem', color: '#6B6358' }}>🕐 {config.pickup_start_time} – {config.pickup_end_time}</p>}
+                    {config?.pickup_address && <p style={{ fontSize: '0.82rem', color: '#6B6358' }}>📍 {config.pickup_address}</p>}
                   </div>
-
-                  {deliveryMethod === 'pickup' && config?.pickup_enabled && (
-                    <div style={{ backgroundColor: '#FFF8EE', borderRadius: '12px', padding: '14px', border: '1px solid rgba(255,158,0,.2)' }}>
-                      <p style={{ fontWeight: 700, color: '#2E2A24', fontSize: '0.85rem', marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                        <Clock size={13} color="#FF9E00" /> Info del pickup
-                      </p>
-                      {config.pickup_date && <p style={{ fontSize: '0.82rem', color: '#6B6358' }}>📅 {config.pickup_date}</p>}
-                      {config.pickup_start_time && <p style={{ fontSize: '0.82rem', color: '#6B6358' }}>🕐 {config.pickup_start_time} – {config.pickup_end_time}</p>}
-                      {config.pickup_address && <p style={{ fontSize: '0.82rem', color: '#6B6358' }}>📍 {config.pickup_address}</p>}
-                    </div>
-                  )}
-
-                  {deliveryMethod === 'delivery' && (
-                    <Field label="Dirección de entrega *" error={fieldErrors.address}>
-                      <input
-                        value={address}
-                        onChange={e => { setAddress(e.target.value); setFieldErrors(p => ({ ...p, address: '' })) }}
-                        placeholder="123 Calle Principal, Ciudad"
-                        style={inputStyle(fieldErrors.address)}
-                      />
-                    </Field>
-                  )}
                 </div>
 
                 {/* Note (optional) */}
@@ -393,12 +366,6 @@ export default function CarritoPage() {
                       <span style={{ fontWeight: 600 }}>{formatCurrency(product.price * quantity)}</span>
                     </div>
                   ))}
-                  {deliveryFee > 0 && (
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '0.85rem', color: '#6B6358' }}>
-                      <span>Delivery</span>
-                      <span style={{ fontWeight: 600 }}>{formatCurrency(deliveryFee)}</span>
-                    </div>
-                  )}
                   <div style={{ borderTop: '1.5px solid #F0EDE8', marginTop: '12px', paddingTop: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <span style={{ fontWeight: 900, color: '#2E2A24', fontSize: '1rem' }}>Total</span>
                     <span style={{ fontWeight: 900, color: '#FF9E00', fontSize: '1.5rem' }}>{formatCurrency(total)}</span>

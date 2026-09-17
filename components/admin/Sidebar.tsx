@@ -3,13 +3,15 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
-import { Package, ShoppingBag, Settings, LogOut, Users } from 'lucide-react'
+import { LayoutDashboard, Package, ShoppingBag, Settings, LogOut, Users, UserCog } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 
 const NAV_ITEMS = [
+  { href: '/admin', icon: LayoutDashboard, label: 'Dashboard', exact: true },
   { href: '/admin/pedidos', icon: ShoppingBag, label: 'Pedidos' },
   { href: '/admin/clientes', icon: Users, label: 'Clientes' },
   { href: '/admin/productos', icon: Package, label: 'Productos' },
+  { href: '/admin/usuarios', icon: UserCog, label: 'Usuarios' },
   { href: '/admin/configuracion', icon: Settings, label: 'Configuración' },
 ]
 
@@ -42,8 +44,8 @@ export default function AdminSidebar() {
 
       {/* Nav */}
       <nav style={{ flex: 1, padding: '16px 12px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
-        {NAV_ITEMS.map(({ href, icon: Icon, label }) => {
-          const active = pathname.startsWith(href)
+        {NAV_ITEMS.map(({ href, icon: Icon, label, exact }) => {
+          const active = exact ? pathname === href : pathname.startsWith(href)
           return (
             <Link key={href} href={href} style={{
               display: 'flex', alignItems: 'center', gap: '10px',

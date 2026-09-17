@@ -34,10 +34,12 @@ export async function POST(request: NextRequest) {
 
     const supabase = createAdminClient()
 
+    // Stripe ya verificó el pago — a diferencia de Zelle, no requiere
+    // revisión manual, así que el pedido pasa directo a "confirmed".
     const { error } = await supabase
       .from('orders')
       .update({
-        order_status: 'payment_pending',
+        order_status: 'confirmed',
         payment_method: 'stripe',
         payment_status: 'paid',
         updated_at: new Date().toISOString(),
@@ -52,7 +54,7 @@ export async function POST(request: NextRequest) {
     await supabase.from('order_status_history').insert({
       order_id,
       old_status: 'received',
-      new_status: 'payment_pending',
+      new_status: 'confirmed',
       changed_by: 'stripe_webhook',
     })
   }
