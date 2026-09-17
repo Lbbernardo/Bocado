@@ -284,7 +284,7 @@ body {
 .bocado-hero { position: relative; isolation: isolate; overflow: hidden; background: #211c16; padding: 118px 24px 48px; }
 .bocado-hero-video, .bocado-hero-shade { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; }
 .bocado-hero-video { object-fit: cover; }
-.bocado-hero-shade { background: rgba(20, 16, 12, .8); }
+.bocado-hero-shade { background: rgba(20, 16, 12, .65); }
 .bocado-hero-content { max-width: 1180px; margin: 0 auto; color: #fffaf0; text-align: center; }
 .bocado-hero-eyebrow { display: inline-flex; align-items: center; gap: 8px; padding: 10px 14px; border: 1px solid #ffffff40; border-radius: 999px; font-size: 10px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; }
 .bocado-hero-eyebrow span { color: #ffae25; }
@@ -311,7 +311,7 @@ body {
 }
 @media (min-width: 1025px) {
   .bocado-hero { padding: 148px 48px 64px; }
-  .bocado-hero-shade { background: linear-gradient(90deg, rgba(20,16,12,.92) 0%, rgba(20,16,12,.82) 50%, rgba(20,16,12,.15) 100%); }
+  .bocado-hero-shade { background: linear-gradient(90deg, rgba(20,16,12,.8) 0%, rgba(20,16,12,.6) 50%, rgba(20,16,12,.08) 100%); }
   .bocado-hero-content { text-align: left; }
   .bocado-hero h1 { max-width: 600px; margin-left: 0; font-size: 3.75rem; }
   .bocado-hero-description, .bocado-hero-facts { margin-left: 0; }
