@@ -35,15 +35,15 @@ export default async function ProductPage({ params }: Props) {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-white pt-16">
+      <div style={{ minHeight: '100vh', backgroundColor: 'white', paddingTop: '68px' }}>
         {/* Breadcrumb */}
-        <div className="max-w-6xl mx-auto px-4 py-4">
-          <nav className="flex items-center gap-1.5 text-xs text-gray-400">
-            <Link href="/" className="hover:text-bocado-dark transition-colors">Inicio</Link>
+        <div style={{ maxWidth: '1180px', margin: '0 auto', padding: '18px 26px 0' }}>
+          <nav style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.78rem', color: '#6B6358' }}>
+            <Link href="/" style={{ color: '#6B6358', textDecoration: 'none' }}>Inicio</Link>
             <ChevronRight size={12} />
-            <Link href="/productos" className="hover:text-bocado-dark transition-colors">Productos</Link>
+            <Link href="/productos" style={{ color: '#6B6358', textDecoration: 'none' }}>Productos</Link>
             <ChevronRight size={12} />
-            <span className="text-bocado-dark font-medium">{product.name}</span>
+            <span style={{ color: '#2E2A24', fontWeight: 600 }}>{product.name}</span>
           </nav>
         </div>
 

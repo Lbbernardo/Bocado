@@ -75,7 +75,7 @@ export default function ClienteDetailPage() {
 
   const totalSpent = orders.reduce((sum, o) => sum + o.total, 0)
   const activeOrders = orders.filter(
-    (o) => !['delivered', 'cancelled'].includes(o.order_status)
+    (o) => !['completed', 'cancelled'].includes(o.order_status)
   ).length
 
   if (loading) {

@@ -6,6 +6,7 @@ import { Plus, Minus, ShoppingCart, Check } from 'lucide-react'
 import { useCart } from '@/store/cart'
 import type { Product } from '@/lib/types'
 import { formatCurrency } from '@/lib/utils'
+import Reveal from '@/components/landing/Reveal'
 
 interface Props {
   product: Product
@@ -32,129 +33,118 @@ export default function ProductDetail({ product }: Props) {
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8 pb-20">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16">
+    <div style={{ maxWidth: '1180px', margin: '0 auto', padding: '32px 26px 96px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '56px', alignItems: 'start' }} className="product-detail-grid">
         {/* Left: Images */}
-        <div className="flex flex-col-reverse lg:flex-row gap-3">
+        <Reveal style={{ display: 'flex', gap: '12px' }} className="product-detail-media">
           {/* Thumbnails */}
           {photos.length > 1 && (
-            <div className="flex lg:flex-col gap-2 overflow-x-auto lg:overflow-y-auto lg:max-h-[520px]">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxHeight: '520px', overflowY: 'auto' }}>
               {photos.map((src, i) => (
                 <button
                   key={i}
                   onClick={() => setActivePhoto(i)}
-                  className={`flex-shrink-0 w-16 h-16 lg:w-20 lg:h-20 rounded-xl overflow-hidden border-2 transition-all ${
-                    activePhoto === i
-                      ? 'border-bocado-orange'
-                      : 'border-gray-200 hover:border-gray-300'
-                  }`}
+                  style={{
+                    flexShrink: 0, width: '72px', height: '72px', borderRadius: '14px', overflow: 'hidden',
+                    border: `2px solid ${activePhoto === i ? '#FF9E00' : '#F0EDE8'}`,
+                    padding: 0, cursor: 'pointer', transition: 'border-color .2s',
+                  }}
                 >
-                  <Image
-                    src={src}
-                    alt={`${product.name} ${i + 1}`}
-                    width={80}
-                    height={80}
-                    className="object-cover w-full h-full"
-                  />
+                  <Image src={src} alt={`${product.name} ${i + 1}`} width={72} height={72} style={{ objectFit: 'cover', width: '100%', height: '100%' }} />
                 </button>
               ))}
             </div>
           )}
 
           {/* Main image */}
-          <div className="flex-1 relative aspect-square rounded-2xl overflow-hidden bg-bocado-cream">
+          <div style={{ flex: 1, position: 'relative', aspectRatio: '1', borderRadius: 'var(--radius)', overflow: 'hidden', backgroundColor: '#FBF5E9' }}>
             {photos.length > 0 ? (
-              <Image
-                src={photos[activePhoto]}
-                alt={product.name}
-                fill
-                className="object-cover"
-                priority
-              />
+              <Image src={photos[activePhoto]} alt={product.name} fill style={{ objectFit: 'cover' }} priority />
             ) : (
-              <div className="flex items-center justify-center h-full">
-                <span className="text-8xl">🧀</span>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+                <span style={{ fontSize: '96px' }}>🧀</span>
               </div>
             )}
             {isOutOfStock && (
-              <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                <span className="bg-white text-bocado-dark font-black text-lg px-6 py-3 rounded-full">
+              <div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(46,42,36,.55)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <span style={{
+                  backgroundColor: 'white', color: '#2E2A24',
+                  fontFamily: 'var(--font-fraunces), Georgia, serif', fontWeight: 700, fontStyle: 'italic',
+                  fontSize: '1.1rem', padding: '12px 28px', borderRadius: '6px 18px 6px 18px',
+                }}>
                   Agotado
                 </span>
               </div>
             )}
           </div>
-        </div>
+        </Reveal>
 
         {/* Right: Info */}
-        <div className="flex flex-col">
-          {/* Category */}
-          <span className="text-xs font-bold uppercase tracking-widest text-bocado-orange mb-2">
-            {product.category}
-          </span>
+        <Reveal delay={100} style={{ display: 'flex', flexDirection: 'column' }}>
+          <span className="eyebrow">{product.category}</span>
 
-          {/* Name */}
-          <h1 className="text-3xl font-black text-bocado-dark leading-tight mb-3">
+          <h1 style={{
+            fontFamily: 'var(--font-fraunces), Georgia, serif', fontWeight: 900,
+            fontSize: 'clamp(1.9rem, 3vw, 2.6rem)', color: '#2E2A24', lineHeight: 1.05, marginBottom: '12px',
+          }}>
             {product.name}
           </h1>
 
-          {/* Price */}
-          <p className="text-3xl font-black text-bocado-dark mb-6">
+          <p style={{ fontWeight: 800, color: '#FF9E00', fontSize: '1.7rem', marginBottom: '24px' }}>
             {formatCurrency(product.price)}
           </p>
 
-          <div className="border-t border-gray-100 pt-6 space-y-6">
-            {/* Description */}
+          <div style={{ borderTop: '1px solid #F0EDE8', paddingTop: '24px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
             {product.description && (
-              <p className="text-gray-600 leading-relaxed text-sm">
+              <p style={{ color: '#6B6358', lineHeight: 1.7, fontSize: '0.92rem' }}>
                 {product.description}
               </p>
             )}
 
             {!isOutOfStock && (
               <>
-                {/* Quantity */}
                 <div>
-                  <label className="text-xs font-bold uppercase tracking-widest text-gray-400 block mb-2">
+                  <label style={{ fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#6B6358', display: 'block', marginBottom: '10px' }}>
                     Cantidad
                   </label>
-                  <div className="flex items-center border border-gray-200 rounded-xl w-fit overflow-hidden">
+                  <div style={{ display: 'flex', alignItems: 'center', border: '1.5px solid #F0EDE8', borderRadius: '999px', width: 'fit-content', overflow: 'hidden' }}>
                     <button
                       onClick={() => setQuantity(Math.max(1, quantity - 1))}
                       disabled={quantity <= 1}
-                      className="w-11 h-11 flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors disabled:opacity-30"
+                      style={{ width: '44px', height: '44px', border: 'none', background: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#2E2A24', cursor: 'pointer', opacity: quantity <= 1 ? 0.3 : 1 }}
                     >
                       <Minus size={16} />
                     </button>
-                    <span className="w-12 text-center font-black text-bocado-dark text-lg">
+                    <span style={{ width: '48px', textAlign: 'center', fontWeight: 800, color: '#2E2A24', fontSize: '1.05rem' }}>
                       {quantity}
                     </span>
                     <button
                       onClick={() => setQuantity(quantity + 1)}
-                      className="w-11 h-11 flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors"
+                      style={{ width: '44px', height: '44px', border: 'none', background: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#2E2A24', cursor: 'pointer' }}
                     >
                       <Plus size={16} />
                     </button>
                   </div>
                 </div>
 
-                {/* Add to cart */}
                 <button
                   onClick={handleAdd}
-                  className={`w-full flex items-center justify-center gap-3 py-4 rounded-2xl font-black text-lg transition-all duration-300 ${
-                    added
-                      ? 'bg-green-500 text-white'
-                      : 'bg-bocado-orange hover:bg-orange-500 text-white hover:shadow-bocado'
-                  }`}
+                  className="btn-pill"
+                  style={{
+                    width: '100%', padding: '17px', fontSize: '1.05rem', gap: '10px',
+                    backgroundColor: added ? '#22C55E' : '#FF9E00',
+                    borderColor: added ? '#22C55E' : '#FF9E00',
+                    color: 'white',
+                  }}
                 >
                   {added ? (
                     <>
-                      <Check size={22} />
+                      <Check size={20} />
                       ¡Agregado al carrito!
                     </>
                   ) : (
                     <>
-                      <ShoppingCart size={22} />
+                      <ShoppingCart size={20} />
                       Agregar al carrito
                     </>
                   )}
@@ -163,20 +153,19 @@ export default function ProductDetail({ product }: Props) {
             )}
 
             {isOutOfStock && (
-              <div className="bg-gray-50 border border-gray-200 rounded-2xl p-4 text-center">
-                <p className="text-gray-500 font-semibold">Este producto está agotado</p>
-                <p className="text-gray-400 text-sm mt-1">Vuelve pronto para más tequeños 🧡</p>
+              <div style={{ backgroundColor: '#FBF5E9', border: '1px solid #F0EDE8', borderRadius: '16px', padding: '18px', textAlign: 'center' }}>
+                <p style={{ color: '#2E2A24', fontWeight: 700 }}>Este producto está agotado</p>
+                <p style={{ color: '#6B6358', fontSize: '0.85rem', marginTop: '4px' }}>Vuelve pronto para más tequeños 🧡</p>
               </div>
             )}
 
-            {/* Stock info */}
             {!isOutOfStock && product.stock !== null && product.stock > 0 && product.stock <= 10 && (
-              <p className="text-amber-600 text-sm font-semibold">
+              <p style={{ color: '#F59E0B', fontWeight: 700, fontSize: '0.88rem' }}>
                 ¡Solo quedan {product.stock} disponibles!
               </p>
             )}
           </div>
-        </div>
+        </Reveal>
       </div>
     </div>
   )

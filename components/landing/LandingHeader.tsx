@@ -5,9 +5,8 @@ import Image from 'next/image'
 import Link from 'next/link'
 
 const NAV = [
-  { label: 'Producto', href: '#producto' },
+  { label: 'Productos', href: '/productos' },
   { label: 'Cómo preparar', href: '#preparar' },
-  { label: 'Por qué Bocado', href: '#beneficios' },
   { label: 'Comprar', href: '#comprar' },
 ]
 
@@ -25,12 +24,12 @@ export default function LandingHeader() {
     <>
       <header style={{
         position: 'fixed', top: 0, left: 0, right: 0, zIndex: 50,
-        height: '78px',
+        height: scrolled ? '64px' : '78px',
         display: 'flex', alignItems: 'center',
         backgroundColor: scrolled ? 'rgba(255,255,255,.96)' : 'rgba(253,249,240,.85)',
         backdropFilter: 'blur(12px)',
         boxShadow: scrolled ? '0 1px 20px rgba(0,0,0,.08)' : 'none',
-        transition: 'background .3s, box-shadow .3s',
+        transition: 'background .3s ease, box-shadow .3s ease, height .3s ease',
       }}>
         <div style={{
           maxWidth: '1180px', margin: '0 auto', padding: '0 26px',
@@ -39,27 +38,40 @@ export default function LandingHeader() {
         }}>
           {/* Logo */}
           <Link href="/">
-            <Image src="/bocado/logo.png" alt="Bocado" width={130} height={44} style={{ height: '42px', width: 'auto' }} />
+            <Image src="/bocado/logo-brand.png" alt="Bocado" width={112} height={56} style={{ height: '56px', width: 'auto' }} />
           </Link>
 
           {/* Desktop nav */}
-          <nav className="desktop-nav" style={{ display: 'flex', alignItems: 'center', gap: '36px' }}>
-            {NAV.map(({ label, href }) => (
-              <a key={href} href={href} style={{ color: '#2E2A24', fontWeight: 500, fontSize: '0.95rem', textDecoration: 'none' }}
+          <nav className="desktop-nav" style={{ display: 'flex', alignItems: 'center', gap: '32px' }}>
+            {NAV.map(({ label, href }) => href.startsWith('/') ? (
+              <Link key={href} href={href} style={{ color: '#2E2A24', fontWeight: 500, fontSize: '0.9rem', textDecoration: 'none' }}
+                onMouseEnter={e => ((e.currentTarget as HTMLAnchorElement).style.color = '#FF9E00')}
+                onMouseLeave={e => ((e.currentTarget as HTMLAnchorElement).style.color = '#2E2A24')}
+              >
+                {label}
+              </Link>
+            ) : (
+              <a key={href} href={href} style={{ color: '#2E2A24', fontWeight: 500, fontSize: '0.9rem', textDecoration: 'none' }}
                 onMouseEnter={e => ((e.currentTarget as HTMLAnchorElement).style.color = '#FF9E00')}
                 onMouseLeave={e => ((e.currentTarget as HTMLAnchorElement).style.color = '#2E2A24')}
               >
                 {label}
               </a>
             ))}
+            <Link href="/pedido/buscar" style={{
+              color: '#6B6358', fontWeight: 600, fontSize: '0.9rem', textDecoration: 'none',
+              display: 'flex', alignItems: 'center', gap: '5px',
+            }}
+              onMouseEnter={e => ((e.currentTarget as HTMLAnchorElement).style.color = '#FF9E00')}
+              onMouseLeave={e => ((e.currentTarget as HTMLAnchorElement).style.color = '#6B6358')}
+            >
+              📦 Seguir pedido
+            </Link>
           </nav>
 
           {/* CTA */}
-          <a href="#comprar" className="desktop-cta" style={{
-            backgroundColor: '#FF9E00', color: 'white',
-            fontWeight: 700, fontSize: '0.9rem',
-            padding: '11px 24px', borderRadius: '999px',
-            textDecoration: 'none',
+          <a href="#comprar" className="btn-pill primary desktop-cta" style={{
+            fontSize: '0.9rem', padding: '11px 24px',
           }}>
             Pídelos ya →
           </a>
@@ -82,24 +94,36 @@ export default function LandingHeader() {
           display: 'flex', flexDirection: 'column',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 26px', height: '78px' }}>
-            <Image src="/bocado/logo.png" alt="Bocado" width={120} height={40} style={{ height: '40px', width: 'auto' }} />
+            <Image src="/bocado/logo-brand.png" alt="Bocado" width={112} height={56} style={{ height: '56px', width: 'auto' }} />
             <button onClick={() => setMenuOpen(false)} style={{ background: 'none', border: 'none', fontSize: '28px', cursor: 'pointer', color: '#2E2A24' }}>✕</button>
           </div>
-          <nav style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', flex: 1, gap: '32px' }}>
-            {NAV.map(({ label, href }) => (
+          <nav style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', flex: 1, gap: '28px' }}>
+            {NAV.map(({ label, href }) => href.startsWith('/') ? (
+              <Link key={href} href={href} onClick={() => setMenuOpen(false)} style={{
+                fontFamily: 'var(--font-fraunces), Georgia, serif', fontWeight: 700, fontSize: '2rem',
+                color: '#2E2A24', textDecoration: 'none',
+              }}>
+                {label}
+              </Link>
+            ) : (
               <a key={href} href={href} onClick={() => setMenuOpen(false)} style={{
-                fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '2rem',
+                fontFamily: 'var(--font-fraunces), Georgia, serif', fontWeight: 700, fontSize: '2rem',
                 color: '#2E2A24', textDecoration: 'none',
               }}>
                 {label}
               </a>
             ))}
-            <a href="#comprar" onClick={() => setMenuOpen(false)} style={{
-              backgroundColor: '#FF9E00', color: 'white', fontWeight: 700,
-              padding: '14px 32px', borderRadius: '999px', textDecoration: 'none', fontSize: '1.1rem', marginTop: '8px',
+            <a href="#comprar" onClick={() => setMenuOpen(false)} className="btn-pill primary" style={{
+              padding: '14px 32px', fontSize: '1.1rem', marginTop: '4px',
             }}>
               Pídelos ya →
             </a>
+            <Link href="/pedido/buscar" onClick={() => setMenuOpen(false)} style={{
+              color: '#6B6358', fontWeight: 600, fontSize: '1rem',
+              textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '6px',
+            }}>
+              📦 Seguir mi pedido
+            </Link>
           </nav>
         </div>
       )}

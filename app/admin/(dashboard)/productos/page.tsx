@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { Plus, Pencil, ToggleLeft, ToggleRight, Loader2, X, Upload, ImageIcon } from 'lucide-react'
+import { Plus, Pencil, Trash2, ToggleLeft, ToggleRight, Loader2, X, Upload, ImageIcon } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import type { Product } from '@/lib/types'
 import { formatCurrency } from '@/lib/utils'
@@ -12,6 +12,7 @@ export default function ProductosAdminPage() {
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
   const [editing, setEditing] = useState<Product | null>(null)
+  const [deletingId, setDeletingId] = useState<string | null>(null)
 
   useEffect(() => {
     fetchProducts()
@@ -33,6 +34,31 @@ export default function ProductosAdminPage() {
       .from('products')
       .update({ is_active: !product.is_active })
       .eq('id', product.id)
+    fetchProducts()
+  }
+
+  async function handleDelete(product: Product) {
+    const confirmed = window.confirm(
+      `¿Eliminar "${product.name}"? Esta acción no se puede deshacer.`
+    )
+    if (!confirmed) return
+
+    setDeletingId(product.id)
+    const supabase = createClient()
+    const { error } = await supabase.from('products').delete().eq('id', product.id)
+    setDeletingId(null)
+
+    if (error) {
+      if (error.code === '23503') {
+        window.alert(
+          'No se puede eliminar: este producto ya tiene pedidos asociados. Puedes desactivarlo en su lugar.'
+        )
+      } else {
+        window.alert('Ocurrió un error al eliminar el producto.')
+      }
+      return
+    }
+
     fetchProducts()
   }
 
@@ -133,13 +159,27 @@ export default function ProductosAdminPage() {
                     </span>
                   )}
                 </div>
-                <button
-                  onClick={() => handleEdit(product)}
-                  className="flex items-center gap-1.5 text-gray-400 hover:text-bocado-orange text-xs font-semibold transition-colors"
-                >
-                  <Pencil size={13} />
-                  Editar
-                </button>
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => handleEdit(product)}
+                    className="flex items-center gap-1.5 text-gray-400 hover:text-bocado-orange text-xs font-semibold transition-colors"
+                  >
+                    <Pencil size={13} />
+                    Editar
+                  </button>
+                  <button
+                    onClick={() => handleDelete(product)}
+                    disabled={deletingId === product.id}
+                    className="flex items-center gap-1.5 text-gray-400 hover:text-red-500 text-xs font-semibold transition-colors disabled:opacity-50"
+                  >
+                    {deletingId === product.id ? (
+                      <Loader2 size={13} className="animate-spin" />
+                    ) : (
+                      <Trash2 size={13} />
+                    )}
+                    Eliminar
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -431,7 +471,7 @@ function ProductFormModal({ product, onClose, onSaved }: ProductFormModalProps) 
           font-size: 14px;
           outline: none;
           transition: border-color 0.15s;
-          font-family: var(--font-poppins), sans-serif;
+          font-family: var(--font-body), sans-serif;
         }
         .input-dark:focus {
           border-color: rgba(255, 166, 0, 0.5);

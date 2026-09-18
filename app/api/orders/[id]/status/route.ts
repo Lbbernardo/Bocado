@@ -8,12 +8,8 @@ const statusSchema = z.object({
   status: z.enum([
     'received',
     'confirmed',
-    'payment_pending',
-    'payment_received',
-    'in_preparation',
     'ready_for_pickup',
-    'scheduled_for_delivery',
-    'delivered',
+    'completed',
     'cancelled',
   ]),
 })
@@ -72,9 +68,21 @@ export async function PATCH(
       changed_by: user.email ?? 'admin',
     })
 
-    // Send notification email (non-blocking)
+    // Send notification email — awaited so it isn't killed when the
+    // serverless function freezes right after the response is returned.
     if (order.customer_email && newStatus !== oldStatus) {
-      sendStatusEmail(order, newStatus).catch(console.error)
+      let pickupInfo: { address?: string; contactPhone?: string } | undefined
+      if (newStatus === 'ready_for_pickup') {
+        const { data: storeConfig } = await supabase
+          .from('store_config')
+          .select('pickup_address, pickup_contact_phone')
+          .single()
+        pickupInfo = {
+          address: storeConfig?.pickup_address ?? undefined,
+          contactPhone: storeConfig?.pickup_contact_phone ?? undefined,
+        }
+      }
+      await sendStatusEmail(order, newStatus, pickupInfo).catch(console.error)
     }
 
     return NextResponse.json({ success: true, status: newStatus })
@@ -92,7 +100,8 @@ async function sendStatusEmail(
     pickup_date?: string
     pickup_time_slot?: string
   },
-  newStatus: OrderStatus
+  newStatus: OrderStatus,
+  pickupInfo?: { address?: string; contactPhone?: string }
 ) {
   const { Resend } = await import('resend')
   const resend = new Resend(process.env.RESEND_API_KEY)
@@ -100,11 +109,9 @@ async function sendStatusEmail(
   const config = ORDER_STATUS_CONFIG[newStatus]
 
   const subjects: Partial<Record<OrderStatus, string>> = {
-    confirmed: `Tu pedido fue confirmado — siguiente paso: el pago 💳`,
-    payment_received: `¡Pago recibido! Tu pedido está en preparación 🧀`,
+    confirmed: `¡Tu pedido fue confirmado! 🧀`,
     ready_for_pickup: `¡Tus tequeños están listos! 🎉`,
-    scheduled_for_delivery: `Tu pedido viene en camino 🛵`,
-    delivered: `¡Que los disfrutes! Gracias por comprar en BOCADO 🧡`,
+    completed: `¡Que los disfrutes! Gracias por comprar en BOCADO 🧡`,
     cancelled: `Tu pedido fue cancelado`,
   }
 
@@ -113,6 +120,22 @@ async function sendStatusEmail(
   const extraInfo =
     newStatus === 'ready_for_pickup' && order.pickup_date
       ? `<p style="color: #FFA600; font-weight: bold;">📅 ${order.pickup_date}${order.pickup_time_slot ? ` · ${order.pickup_time_slot}` : ''}</p>`
+      : ''
+
+  const pickupBlock =
+    newStatus === 'ready_for_pickup' && (pickupInfo?.address || pickupInfo?.contactPhone)
+      ? `
+        <div style="background: #1a1a1a; border-radius: 12px; padding: 16px; margin: 0 0 20px; border: 1px solid #222;">
+          ${pickupInfo.address ? `
+          <p style="color: #555; margin: 0 0 4px; font-size: 11px;">DIRECCIÓN PARA RECOGER</p>
+          <p style="color: #fff; font-size: 14px; margin: 0 0 12px; line-height: 1.5;">📍 ${pickupInfo.address}</p>
+          ` : ''}
+          ${pickupInfo.contactPhone ? `
+          <p style="color: #555; margin: 0 0 4px; font-size: 11px;">COMUNÍCATE PARA COORDINAR</p>
+          <p style="color: #FFA600; font-size: 16px; font-weight: 800; margin: 0;">📞 ${pickupInfo.contactPhone}</p>
+          ` : ''}
+        </div>
+      `
       : ''
 
   await resend.emails.send({
@@ -136,6 +159,7 @@ async function sendStatusEmail(
             <p style="color: #555; margin: 0 0 4px; font-size: 11px;">PEDIDO</p>
             <p style="color: #FFA600; font-size: 22px; font-weight: 900; margin: 0;">${order.order_number}</p>
           </div>
+          ${pickupBlock}
           <hr style="border: none; border-top: 1px solid #222; margin: 24px 0;" />
           <p style="color: #555; font-size: 13px; text-align: center; margin: 0;">
             ¿Tienes preguntas? Escríbenos por WhatsApp.

@@ -45,7 +45,7 @@ export default function Navbar() {
         }}>
           {/* Logo */}
           <Link href="/">
-            <Image src="/bocado/logo.png" alt="Bocado" width={110} height={36} style={{ height: '36px', width: 'auto' }} />
+            <Image src="/bocado/logo-brand.png" alt="Bocado" width={112} height={56} style={{ height: '56px', width: 'auto' }} />
           </Link>
 
           {/* Desktop links */}
@@ -80,11 +80,8 @@ export default function Navbar() {
               )}
             </Link>
 
-            <Link href="/productos" className="desktop-cta" style={{
-              backgroundColor: '#FF9E00', color: 'white',
-              fontWeight: 700, fontSize: '0.88rem',
-              padding: '10px 22px', borderRadius: '999px',
-              textDecoration: 'none',
+            <Link href="/productos" className="btn-pill primary desktop-cta" style={{
+              fontSize: '0.88rem', padding: '10px 22px',
             }}>
               Pedir ahora
             </Link>
@@ -106,7 +103,7 @@ export default function Navbar() {
           display: 'flex', flexDirection: 'column',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 26px', height: '68px' }}>
-            <Image src="/bocado/logo.png" alt="Bocado" width={110} height={36} style={{ height: '36px', width: 'auto' }} />
+            <Image src="/bocado/logo-brand.png" alt="Bocado" width={112} height={56} style={{ height: '56px', width: 'auto' }} />
             <button onClick={() => setMenuOpen(false)} style={{ background: 'none', border: 'none', fontSize: '26px', cursor: 'pointer', color: '#2E2A24' }}>
               <X size={26} />
             </button>
@@ -118,17 +115,16 @@ export default function Navbar() {
               { label: 'Carrito', href: '/carrito' },
             ].map(({ label, href }) => (
               <Link key={href} href={href} onClick={() => setMenuOpen(false)} style={{
-                fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '1.8rem',
+                fontFamily: 'var(--font-fraunces), Georgia, serif', fontWeight: 700, fontSize: '1.8rem',
                 color: '#2E2A24', textDecoration: 'none',
               }}>
                 {label}
               </Link>
             ))}
-            <Link href="/productos" onClick={() => setMenuOpen(false)} style={{
-              backgroundColor: '#FF9E00', color: 'white', fontWeight: 700,
-              padding: '14px 32px', borderRadius: '999px', textDecoration: 'none', fontSize: '1rem', marginTop: '8px',
+            <Link href="/productos" onClick={() => setMenuOpen(false)} className="btn-pill primary" style={{
+              padding: '14px 32px', fontSize: '1rem', marginTop: '8px',
             }}>
-              Pedir ahora →
+              Pedir ahora <span className="arrow">→</span>
             </Link>
           </nav>
         </div>

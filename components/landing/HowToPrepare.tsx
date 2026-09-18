@@ -1,3 +1,5 @@
+import Reveal from './Reveal'
+
 const METHODS = [
   {
     icon: '🌀',
@@ -29,25 +31,22 @@ export default function HowToPrepare() {
       <div style={{ maxWidth: '1180px', margin: '0 auto' }}>
 
         {/* Header */}
-        <div style={{ textAlign: 'center', marginBottom: '56px' }}>
-          <p style={{ color: '#FF9E00', fontWeight: 700, fontSize: '11px', letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
-            <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#FF9E00', display: 'inline-block' }} />
-            LISTOS PARA PREPARAR
-          </p>
-          <h2 style={{ fontFamily: 'var(--font-display), "Baloo 2", system-ui', fontWeight: 800, color: '#2E2A24', fontSize: 'clamp(2rem,4vw,2.8rem)', marginBottom: '16px' }}>
+        <Reveal style={{ textAlign: 'center', marginBottom: '56px' }}>
+          <p className="eyebrow" style={{ justifyContent: 'center' }}>LISTOS PARA PREPARAR</p>
+          <h2 style={{ fontFamily: 'var(--font-fraunces), Georgia, serif', fontWeight: 800, color: '#2E2A24', fontSize: 'clamp(2rem,4vw,2.8rem)', marginBottom: '16px' }}>
             Del freezer a la mesa, en minutos
           </h2>
           <p style={{ color: '#6B6358', maxWidth: '520px', margin: '0 auto', lineHeight: 1.65 }}>
             Sin descongelar. Elige tu método favorito y disfruta tequeños recién hechos cuando se te antoje.
           </p>
-        </div>
+        </Reveal>
 
         {/* Cards */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }} className="prep-grid">
-          {METHODS.map(({ icon, title, time, steps }) => (
-            <div key={title} style={{
+          {METHODS.map(({ icon, title, time, steps }, i) => (
+            <Reveal key={title} delay={i * 120} style={{
               border: '2px solid #F0EDE8',
-              borderRadius: '26px',
+              borderRadius: 'var(--radius)',
               padding: '36px',
               backgroundColor: 'white',
             }}>
@@ -62,7 +61,7 @@ export default function HowToPrepare() {
                   {icon}
                 </div>
                 <div>
-                  <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, color: '#2E2A24', fontSize: '1.3rem' }}>{title}</p>
+                  <p style={{ fontFamily: 'var(--font-fraunces), Georgia, serif', fontWeight: 700, color: '#2E2A24', fontSize: '1.3rem' }}>{title}</p>
                   <p style={{ color: '#FF9E00', fontWeight: 600, fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
                     ⏱ {time}
                   </p>
@@ -85,7 +84,7 @@ export default function HowToPrepare() {
                   </li>
                 ))}
               </ol>
-            </div>
+            </Reveal>
           ))}
         </div>
       </div>

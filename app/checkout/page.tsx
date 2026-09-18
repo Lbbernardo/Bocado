@@ -21,9 +21,8 @@ const checkoutSchema = z
       .regex(/^[\d\s\+\-\(\)]+$/, 'Teléfono inválido'),
     customer_email: z
       .string()
-      .email('Email inválido')
-      .optional()
-      .or(z.literal('')),
+      .min(1, 'Email requerido')
+      .email('Email inválido'),
     delivery_method: z.enum(['pickup', 'delivery']),
     delivery_address: z.string().optional(),
     customer_note: z.string().optional(),
@@ -131,7 +130,7 @@ export default function CheckoutPage() {
               <ArrowLeft size={20} />
             </Link>
             <div>
-              <h1 className="text-3xl font-black text-bocado-dark">
+              <h1 className="text-3xl font-fraunces font-bold text-bocado-dark">
                 Confirmar pedido
               </h1>
               <p className="text-gray-500 text-sm">Completa tus datos</p>
@@ -184,8 +183,7 @@ export default function CheckoutPage() {
                 <div>
                   <label className="text-sm font-semibold text-gray-700 block mb-1.5 flex items-center gap-1">
                     <Mail size={13} />
-                    Email{' '}
-                    <span className="text-gray-400 font-normal">(opcional)</span>
+                    Email *
                   </label>
                   <input
                     {...register('customer_email')}

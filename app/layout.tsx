@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next'
-import { Poppins, Baloo_2 } from 'next/font/google'
+import { Manrope, Fraunces } from 'next/font/google'
 import './globals.css'
 import dynamic from 'next/dynamic'
 
@@ -9,17 +9,18 @@ const CartBar = dynamic(() => import('@/components/CartBar'), { ssr: false })
 const CartHydration = dynamic(() => import('@/components/CartHydration'), { ssr: false })
 const ChatWidget = dynamic(() => import('@/components/ChatWidget'), { ssr: false })
 
-const poppins = Poppins({
-  weight: ['400', '500', '600', '700', '800', '900'],
+const manrope = Manrope({
+  weight: ['400', '500', '600', '700', '800'],
   subsets: ['latin'],
-  variable: '--font-poppins',
+  variable: '--font-body',
   display: 'swap',
 })
 
-const baloo = Baloo_2({
-  weight: ['600', '700', '800'],
+const fraunces = Fraunces({
+  weight: ['600', '700', '800', '900'],
+  style: ['normal', 'italic'],
   subsets: ['latin'],
-  variable: '--font-display',
+  variable: '--font-fraunces',
   display: 'swap',
 })
 
@@ -52,8 +53,8 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="es" className={`${poppins.variable} ${baloo.variable}`}>
-      <body className="font-poppins bg-white text-bocado-dark antialiased">
+    <html lang="es" className={`${manrope.variable} ${fraunces.variable}`}>
+      <body className="font-body bg-white text-bocado-dark antialiased">
         {children}
         <CartHydration />
         <CartToast />

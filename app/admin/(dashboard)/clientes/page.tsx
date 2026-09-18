@@ -136,7 +136,7 @@ export default function ClientesPage() {
         {filtered.map((customer) => {
           const isOpen = expanded === customer.customer_phone
           const activeOrder = customer.orders.find(
-            (o) => !['delivered', 'cancelled'].includes(o.order_status)
+            (o) => !['completed', 'cancelled'].includes(o.order_status)
           )
 
           return (

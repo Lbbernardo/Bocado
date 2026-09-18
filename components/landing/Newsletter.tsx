@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Image from 'next/image'
+import Reveal from './Reveal'
 
 export default function Newsletter() {
   const [email, setEmail] = useState('')
@@ -16,31 +17,44 @@ export default function Newsletter() {
   }
 
   return (
-    <section style={{
-      backgroundColor: '#FF9E00',
-      position: 'relative',
-      overflow: 'hidden',
-    }} className="section-pad">
-      {/* Pattern background */}
-      <div style={{
-        position: 'absolute', inset: 0,
-        backgroundImage: 'url(/bocado/pattern.svg)',
-        backgroundRepeat: 'repeat',
-        backgroundSize: '100px',
-        opacity: 0.12,
-      }} />
+    <section style={{ backgroundColor: '#FBF5E9', padding: '80px 20px' }}>
+      <Reveal style={{
+        maxWidth: '840px', margin: '0 auto',
+        backgroundColor: '#FF9E00',
+        borderRadius: 'var(--radius)',
+        padding: '56px 32px',
+        position: 'relative',
+        overflow: 'hidden',
+      }}>
+        {/* Pattern background */}
+        <div style={{
+          position: 'absolute', inset: 0,
+          backgroundImage: 'url(/bocado/pattern.svg)',
+          backgroundRepeat: 'repeat',
+          backgroundSize: '100px',
+          opacity: 0.12,
+        }} />
+        {/* Decorative floating icon */}
+        <div className="chip-float" style={{
+          position: 'absolute', top: '-40px', left: 'calc(50% - 40px)',
+          width: '80px', height: '80px', borderRadius: '50%',
+          backgroundColor: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center',
+          fontSize: '34px', boxShadow: '0 10px 30px rgba(0,0,0,.15)',
+        }}>
+          ✉️
+        </div>
 
-      <div style={{ maxWidth: '600px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 1 }}>
+        <div style={{ maxWidth: '520px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 1, paddingTop: '20px' }}>
         <Image
-          src="/bocado/logo-w.png"
+          src="/bocado/logo-brand.png"
           alt="Bocado"
-          width={140}
-          height={46}
-          style={{ height: '46px', width: 'auto', margin: '0 auto 28px' }}
+          width={160}
+          height={80}
+          style={{ height: '80px', width: 'auto', background: '#fffaf0', padding: '10px', borderRadius: '12px', margin: '0 auto 28px' }}
         />
 
         <h2 style={{
-          fontFamily: 'var(--font-display), "Baloo 2", system-ui',
+          fontFamily: 'var(--font-fraunces), Georgia, serif',
           fontWeight: 800, color: 'white',
           fontSize: 'clamp(2rem,4vw,2.8rem)',
           marginBottom: '14px',
@@ -52,7 +66,7 @@ export default function Newsletter() {
           Recetas, antojos y un 10% de descuento en tu primer pedido. Sin spam, solo queso.
         </p>
 
-        <form onSubmit={handleSubmit} style={{ display: 'flex', gap: '0', maxWidth: '520px', margin: '0 auto 16px' }}>
+        <form onSubmit={handleSubmit} className="newsletter-form" style={{ display: 'flex', gap: '10px', maxWidth: '520px', margin: '0 auto 16px' }}>
           <input
             type="email"
             value={email}
@@ -61,25 +75,15 @@ export default function Newsletter() {
             required
             style={{
               flex: 1,
-              padding: '16px 24px',
-              borderRadius: '999px 0 0 999px',
+              padding: '16px 22px',
+              borderRadius: '6px',
               border: 'none',
               fontSize: '0.95rem',
               outline: 'none',
               color: '#2E2A24',
             }}
           />
-          <button type="submit" style={{
-            backgroundColor: '#2E2A24',
-            color: 'white',
-            fontWeight: 700,
-            padding: '16px 28px',
-            borderRadius: '0 999px 999px 0',
-            border: 'none',
-            cursor: 'pointer',
-            fontSize: '0.95rem',
-            whiteSpace: 'nowrap',
-          }}>
+          <button type="submit" className="btn-pill dark" style={{ padding: '16px 26px' }}>
             {sent ? '¡Listo! 🎉' : 'Quiero mi 10%'}
           </button>
         </form>
@@ -87,7 +91,8 @@ export default function Newsletter() {
         <p style={{ color: 'rgba(255,255,255,.65)', fontSize: '0.8rem' }}>
           Al suscribirte aceptas recibir correos de Bocado. Cancela cuando quieras.
         </p>
-      </div>
+        </div>
+      </Reveal>
     </section>
   )
 }

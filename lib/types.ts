@@ -16,12 +16,8 @@ export interface Product {
 export type OrderStatus =
   | 'received'
   | 'confirmed'
-  | 'payment_pending'
-  | 'payment_received'
-  | 'in_preparation'
   | 'ready_for_pickup'
-  | 'scheduled_for_delivery'
-  | 'delivered'
+  | 'completed'
   | 'cancelled'
 
 export type DeliveryMethod = 'pickup' | 'delivery'
@@ -67,6 +63,8 @@ export interface StoreConfig {
   pickup_end_time: string | null
   pickup_address: string | null
   pickup_instructions: string | null
+  pickup_contact_phone: string | null
+  support_whatsapp_number: string | null
   delivery_enabled: boolean
   delivery_fee: number
   delivery_zones: string | null
@@ -77,6 +75,8 @@ export interface StoreConfig {
   zelle_enabled: boolean
   zelle_name: string
   zelle_recipient: string
+  admin_notify_new_order: boolean
+  admin_notification_email: string | null
   updated_at: string
 }
 
@@ -90,34 +90,16 @@ export const ORDER_STATUS_CONFIG: Record<
   { label: string; color: string; bg: string; message: string }
 > = {
   received: {
-    label: 'Recibido',
+    label: 'Pedido recibido',
     color: '#6366F1',
     bg: '#EEF2FF',
-    message: 'Tu pedido fue recibido correctamente. Estamos revisando disponibilidad.',
+    message: 'Recibimos tu pedido. Si pagaste por Zelle, estamos verificando tu pago.',
   },
   confirmed: {
-    label: 'Pedido confirmado',
+    label: 'Confirmado',
     color: '#0EA5E9',
     bg: '#F0F9FF',
     message: '¡Tu pedido fue confirmado! Estamos preparando todo. 🧡',
-  },
-  payment_pending: {
-    label: 'Pago por confirmar',
-    color: '#F59E0B',
-    bg: '#FFFBEB',
-    message: 'Tu pago está siendo verificado. Te confirmaremos pronto.',
-  },
-  payment_received: {
-    label: 'Pago recibido',
-    color: '#10B981',
-    bg: '#ECFDF5',
-    message: 'Hemos recibido tu pago. Tu pedido está en preparación.',
-  },
-  in_preparation: {
-    label: 'En preparación',
-    color: '#8B5CF6',
-    bg: '#F5F3FF',
-    message: 'Estamos preparando tu pedido con mucho amor. 🤎',
   },
   ready_for_pickup: {
     label: 'Listo para recoger',
@@ -125,17 +107,11 @@ export const ORDER_STATUS_CONFIG: Record<
     bg: '#F0FDF4',
     message: '¡Tu pedido está listo! Puedes pasar a recogerlo.',
   },
-  scheduled_for_delivery: {
-    label: 'Programado para entrega',
-    color: '#FFA600',
-    bg: '#FFF8EE',
-    message: 'Tu pedido será entregado pronto.',
-  },
-  delivered: {
-    label: 'Entregado',
+  completed: {
+    label: 'Completado',
     color: '#15803D',
     bg: '#F0FDF4',
-    message: 'Tu pedido fue entregado. ¡Gracias por comprar en BOCADO! 🧡',
+    message: '¡Pedido completado! Gracias por comprar en BOCADO 🧡',
   },
   cancelled: {
     label: 'Cancelado',
@@ -146,27 +122,21 @@ export const ORDER_STATUS_CONFIG: Record<
 }
 
 export const ORDER_STATUS_FLOW: Partial<Record<OrderStatus, OrderStatus[]>> = {
-  received: ['cancelled'],
-  payment_pending: ['confirmed', 'cancelled'],
-  confirmed: ['in_preparation', 'cancelled'],
-  in_preparation: ['ready_for_pickup', 'scheduled_for_delivery', 'cancelled'],
-  ready_for_pickup: ['delivered', 'cancelled'],
-  scheduled_for_delivery: ['delivered', 'cancelled'],
+  received: ['confirmed', 'cancelled'],
+  confirmed: ['ready_for_pickup', 'cancelled'],
+  ready_for_pickup: ['completed', 'cancelled'],
 }
 
 export const STATUS_ACTION_LABELS: Partial<Record<OrderStatus, string>> = {
   confirmed: 'Confirmar pago recibido',
-  in_preparation: 'Iniciar preparación',
-  ready_for_pickup: 'Listo para recoger',
-  scheduled_for_delivery: 'Programar entrega',
-  delivered: 'Marcar como entregado',
+  ready_for_pickup: 'Marcar listo para recoger',
+  completed: 'Marcar como completado',
   cancelled: 'Cancelar pedido',
 }
 
 // Estado anterior para retroceder (solo estados reversibles)
 export const ORDER_STATUS_PREV: Partial<Record<OrderStatus, OrderStatus>> = {
-  confirmed: 'payment_pending',
-  in_preparation: 'confirmed',
-  ready_for_pickup: 'in_preparation',
-  scheduled_for_delivery: 'in_preparation',
+  confirmed: 'received',
+  ready_for_pickup: 'confirmed',
+  completed: 'ready_for_pickup',
 }

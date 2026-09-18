@@ -2,6 +2,7 @@ import LandingHeader from '@/components/landing/LandingHeader'
 import Hero from '@/components/landing/Hero'
 import Benefits from '@/components/landing/Benefits'
 import Product from '@/components/landing/Product'
+import MarqueeRibbon from '@/components/landing/MarqueeRibbon'
 import HowToPrepare from '@/components/landing/HowToPrepare'
 import Gallery from '@/components/landing/Gallery'
 import BuySection from '@/components/landing/BuySection'
@@ -26,8 +27,18 @@ async function getTopProducts() {
   }
 }
 
+async function getStoreIsOpen() {
+  try {
+    const supabase = createClient()
+    const { data } = await supabase.from('store_config').select('store_is_open').single()
+    return data?.store_is_open ?? true
+  } catch {
+    return true
+  }
+}
+
 export default async function HomePage() {
-  const topProducts = await getTopProducts()
+  const [topProducts, storeIsOpen] = await Promise.all([getTopProducts(), getStoreIsOpen()])
 
   return (
     <>
@@ -35,9 +46,10 @@ export default async function HomePage() {
       <Hero />
       <Benefits />
       <Product />
+      <MarqueeRibbon />
       <HowToPrepare />
       <Gallery />
-      <BuySection products={topProducts} />
+      <BuySection products={topProducts} storeIsOpen={storeIsOpen} />
       <Newsletter />
       <LandingFooter />
     </>

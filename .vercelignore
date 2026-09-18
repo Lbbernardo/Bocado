@@ -1,0 +1,6 @@
+.env*
+DESIGN_REVIEW.md
+screenshots
+node_modules
+.next
+.git

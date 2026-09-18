@@ -93,7 +93,7 @@ export default function ProductCard({ product }: ProductCardProps) {
 
         {/* Category badge */}
         <div className="absolute top-3 left-3">
-          <span className="bg-bocado-dark/70 text-bocado-yellow text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider backdrop-blur-sm">
+          <span className="bg-bocado-dark/70 text-bocado-yellow text-[10px] font-bold px-3 py-1 rounded-[4px_10px_4px_10px] uppercase tracking-wider backdrop-blur-sm">
             {product.category}
           </span>
         </div>
@@ -101,7 +101,7 @@ export default function ProductCard({ product }: ProductCardProps) {
 
       {/* Info */}
       <div className="p-5 flex flex-col flex-1">
-        <h3 className="font-black text-bocado-dark text-lg leading-tight mb-1">
+        <h3 className="font-fraunces font-bold text-bocado-dark text-lg leading-tight mb-1">
           {product.name}
         </h3>
         <p className="text-gray-500 text-sm leading-relaxed mb-4 flex-1">
@@ -139,10 +139,10 @@ export default function ProductCard({ product }: ProductCardProps) {
             <button
               onClick={handleAdd}
               disabled={product.stock !== null && product.stock === 0}
-              className={`flex items-center gap-1.5 px-4 py-2 rounded-full font-bold text-sm transition-all duration-200 ${
+              className={`flex items-center gap-1.5 px-4 py-2 rounded-md font-fraunces italic font-semibold text-sm transition-all duration-200 ${
                 added
                   ? 'bg-green-500 text-white'
-                  : 'bg-bocado-orange hover:bg-orange-500 text-white hover:shadow-bocado-sm'
+                  : 'bg-bocado-orange hover:bg-bocado-dark text-white hover:shadow-bocado-sm'
               } disabled:opacity-50 disabled:cursor-not-allowed`}
             >
               <ShoppingCart size={14} />
