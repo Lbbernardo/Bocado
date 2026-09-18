@@ -36,7 +36,7 @@ export default function AdminSidebar() {
     }}>
       {/* Logo */}
       <div style={{ padding: '24px 20px', borderBottom: '1px solid rgba(255,255,255,.06)' }}>
-        <Image src="/bocado/logo-w.png" alt="Bocado" width={100} height={34} style={{ height: '32px', width: 'auto' }} />
+        <Image src="/bocado/logo-brand.png" alt="Bocado" width={128} height={64} style={{ height: '64px', width: 'auto' }} />
         <p style={{ color: 'rgba(255,255,255,.3)', fontSize: '10px', letterSpacing: '0.15em', textTransform: 'uppercase', marginTop: '6px' }}>
           Dashboard Admin
         </p>

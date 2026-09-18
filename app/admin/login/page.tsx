@@ -39,7 +39,7 @@ export default function AdminLoginPage() {
       <div style={{ width: '100%', maxWidth: '360px' }}>
         {/* Logo */}
         <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-          <img src="/bocado/logo-w.png" alt="Bocado" style={{ height: '48px', width: 'auto', margin: '0 auto 12px' }} />
+          <img src="/bocado/logo-brand.png" alt="Bocado" style={{ height: '64px', width: 'auto', margin: '0 auto 12px' }} />
           <p style={{ color: 'rgba(255,255,255,.3)', fontSize: '11px', letterSpacing: '0.2em', textTransform: 'uppercase' }}>
             Panel Administrativo
           </p>

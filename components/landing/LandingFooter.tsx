@@ -44,7 +44,7 @@ export default function LandingFooter() {
 
           {/* Brand */}
           <div>
-            <Image src="/bocado/logo-w.png" alt="Bocado" width={130} height={44} style={{ height: '44px', width: 'auto', marginBottom: '16px' }} />
+            <Image src="/bocado/logo-brand.png" alt="Bocado" width={128} height={64} style={{ height: '64px', width: 'auto', marginBottom: '16px' }} />
             <p style={{ color: 'rgba(255,255,255,.45)', fontSize: '0.875rem', lineHeight: 1.65, marginBottom: '24px', maxWidth: '260px' }}>
               Tequeños venezolanos hechos con queso de verdad y mucho amor. Crunchy outside, cheesy inside.
             </p>

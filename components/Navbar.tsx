@@ -45,7 +45,7 @@ export default function Navbar() {
         }}>
           {/* Logo */}
           <Link href="/">
-            <Image src="/bocado/logo.png" alt="Bocado" width={110} height={36} style={{ height: '36px', width: 'auto' }} />
+            <Image src="/bocado/logo-brand.png" alt="Bocado" width={112} height={56} style={{ height: '56px', width: 'auto' }} />
           </Link>
 
           {/* Desktop links */}
@@ -103,7 +103,7 @@ export default function Navbar() {
           display: 'flex', flexDirection: 'column',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 26px', height: '68px' }}>
-            <Image src="/bocado/logo.png" alt="Bocado" width={110} height={36} style={{ height: '36px', width: 'auto' }} />
+            <Image src="/bocado/logo-brand.png" alt="Bocado" width={112} height={56} style={{ height: '56px', width: 'auto' }} />
             <button onClick={() => setMenuOpen(false)} style={{ background: 'none', border: 'none', fontSize: '26px', cursor: 'pointer', color: '#2E2A24' }}>
               <X size={26} />
             </button>

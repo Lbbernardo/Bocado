@@ -38,7 +38,7 @@ export default function LandingHeader() {
         }}>
           {/* Logo */}
           <Link href="/">
-            <Image src="/bocado/logo.png" alt="Bocado" width={130} height={44} style={{ height: '42px', width: 'auto' }} />
+            <Image src="/bocado/logo-brand.png" alt="Bocado" width={112} height={56} style={{ height: '56px', width: 'auto' }} />
           </Link>
 
           {/* Desktop nav */}
@@ -94,7 +94,7 @@ export default function LandingHeader() {
           display: 'flex', flexDirection: 'column',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 26px', height: '78px' }}>
-            <Image src="/bocado/logo.png" alt="Bocado" width={120} height={40} style={{ height: '40px', width: 'auto' }} />
+            <Image src="/bocado/logo-brand.png" alt="Bocado" width={112} height={56} style={{ height: '56px', width: 'auto' }} />
             <button onClick={() => setMenuOpen(false)} style={{ background: 'none', border: 'none', fontSize: '28px', cursor: 'pointer', color: '#2E2A24' }}>✕</button>
           </div>
           <nav style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', flex: 1, gap: '28px' }}>

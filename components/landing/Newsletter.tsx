@@ -46,11 +46,11 @@ export default function Newsletter() {
 
         <div style={{ maxWidth: '520px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 1, paddingTop: '20px' }}>
         <Image
-          src="/bocado/logo-w.png"
+          src="/bocado/logo-brand.png"
           alt="Bocado"
-          width={140}
-          height={46}
-          style={{ height: '46px', width: 'auto', margin: '0 auto 28px' }}
+          width={160}
+          height={80}
+          style={{ height: '80px', width: 'auto', background: '#fffaf0', padding: '10px', borderRadius: '12px', margin: '0 auto 28px' }}
         />
 
         <h2 style={{
